@@ -5,14 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class InitialLoginPage extends StatefulWidget {
-  const InitialLoginPage({super.key});
+class InitialLoginScreen extends StatefulWidget {
+  const InitialLoginScreen({super.key});
 
   @override
-  State<InitialLoginPage> createState() => _InitialLoginPageState();
+  State<InitialLoginScreen> createState() => _InitialLoginScreenState();
 }
 
-class _InitialLoginPageState extends State<InitialLoginPage> {
+class _InitialLoginScreenState extends State<InitialLoginScreen> {
   Widget optionsButton(
     String text,
     Color textColor,
