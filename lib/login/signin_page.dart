@@ -147,7 +147,7 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                 ],
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             Stack(
               children: [
                 SizedBox(height: 250, width: double.infinity),
@@ -156,14 +156,29 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                   top: 0,
                   child: Image.asset("assets/images/robot.png", width: 200),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    "Welcome Back!",
-                    style: GoogleFonts.urbanist(
-                      color: const Color.fromARGB(255, 227, 178, 69),
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
+                Positioned(
+                  top: 20,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Welcome Back",
+                          style: GoogleFonts.spaceGrotesk(
+                            color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "!",
+                          style: GoogleFonts.spaceGrotesk(
+                            color: const Color.fromARGB(255, 227, 178, 69),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -180,25 +195,25 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                           children: [
                             Text(
                               "Let",
-                              style: GoogleFonts.urbanist(
+                              style: GoogleFonts.spaceGrotesk(
                                 color: Color.fromARGB(255, 253, 253, 252),
-                                fontSize: 25,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               "'",
-                              style: GoogleFonts.urbanist(
+                              style: GoogleFonts.spaceGrotesk(
                                 color: const Color.fromARGB(255, 227, 178, 69),
-                                fontSize: 25,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               "s Pick Up ",
-                              style: GoogleFonts.urbanist(
+                              style: GoogleFonts.spaceGrotesk(
                                 color: Color.fromARGB(255, 253, 253, 252),
-                                fontSize: 25,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -208,17 +223,17 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                           children: [
                             Text(
                               "where you left off",
-                              style: GoogleFonts.urbanist(
+                              style: GoogleFonts.spaceGrotesk(
                                 color: Color.fromARGB(255, 253, 253, 252),
-                                fontSize: 25,
+                                fontSize: 23,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               ".",
-                              style: GoogleFonts.urbanist(
+                              style: GoogleFonts.spaceGrotesk(
                                 color: const Color.fromARGB(255, 227, 178, 69),
-                                fontSize: 25,
+                                fontSize: 23,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -236,8 +251,9 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                     child: Text(
                       "Sign in to continue \nwith your conversations.",
                       style: GoogleFonts.urbanist(
-                        color: Color.fromARGB(161, 253, 253, 252),
+                        color: Color.fromARGB(193, 253, 253, 252),
                         fontSize: 16,
+                        fontWeight: FontWeight.w400
                       ),
                     ),
                   ),
