@@ -196,7 +196,7 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                       ),
                     ),
                   ),
-          
+
                   Positioned(
                     bottom: 100,
                     child: Padding(
@@ -212,15 +212,18 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                                 style: GoogleFonts.spaceGrotesk(
                                   color: Color.fromARGB(255, 253, 253, 252),
                                   fontSize: 23,
-                                  
                                 ),
                               ),
                               Text(
                                 "'",
                                 style: GoogleFonts.spaceGrotesk(
-                                  color: const Color.fromARGB(255, 227, 178, 69),
+                                  color: const Color.fromARGB(
+                                    255,
+                                    227,
+                                    178,
+                                    69,
+                                  ),
                                   fontSize: 23,
-                                  
                                 ),
                               ),
                               Text(
@@ -228,7 +231,6 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                                 style: GoogleFonts.spaceGrotesk(
                                   color: Color.fromARGB(255, 253, 253, 252),
                                   fontSize: 23,
-                                  
                                 ),
                               ),
                             ],
@@ -240,15 +242,18 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                                 style: GoogleFonts.spaceGrotesk(
                                   color: Color.fromARGB(255, 253, 253, 252),
                                   fontSize: 23,
-                                  
                                 ),
                               ),
                               Text(
                                 ".",
                                 style: GoogleFonts.spaceGrotesk(
-                                  color: const Color.fromARGB(255, 227, 178, 69),
+                                  color: const Color.fromARGB(
+                                    255,
+                                    227,
+                                    178,
+                                    69,
+                                  ),
                                   fontSize: 23,
-                                  
                                 ),
                               ),
                             ],
@@ -338,7 +343,7 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                   ],
                 ),
               ),
-          
+
               SizedBox(height: 30),
               optionsButton(
                 "Continue with Password",
@@ -360,7 +365,7 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
                 true,
               ),
               SizedBox(height: 20),
-          
+
               optionsButton(
                 "Sign Up",
                 Colors.white,
@@ -372,45 +377,41 @@ class _InitialLoginPageState extends State<InitialLoginPage> {
               ),
               SizedBox(height: 30),
               Stack(
-  children: [
-    const SizedBox(
-      height: 150,
-      width: double.infinity,
-    ),
+                children: [
+                  const SizedBox(height: 150, width: double.infinity),
 
-    Positioned(
-      bottom: 25, // 👈 move waves upward
-      left: 0,
-      right: 0,
-      child: Image.asset(
-        "assets/images/waves.png",
-        fit: BoxFit.cover,
-      ),
-    ),
+                  Positioned(
+                    bottom: 25,
+                    left: 0,
+                    right: 0,
+                    child: Image.asset(
+                      "assets/images/waves.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
 
-    Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FaIcon(
-          FontAwesomeIcons.shieldHalved,
-          color: const Color.fromARGB(255, 227, 178, 69),
-          size: 18,
-        ),
-        const SizedBox(width: 10),
-        Text(
-          "Your data is safe with us.",
-          style: GoogleFonts.urbanist(
-            letterSpacing: 2,
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    ),
-  ],
-)
-              
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.shieldHalved,
+                        color: const Color.fromARGB(255, 227, 178, 69),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Your data is safe with us.",
+                        style: GoogleFonts.urbanist(
+                          letterSpacing: 2,
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ],
           ),
         ),
