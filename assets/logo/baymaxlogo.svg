@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <g fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <!-- antenna -->
+    <path d="M512 180 V135"/>
+
+    <!-- main robot/chat outline -->
+    <path d="M410 190 H614
+             C650 190 675 215 675 250
+             V515
+             C675 550 650 575 614 575
+             H552
+             L512 635
+             L472 575
+             H410
+             C374 575 349 550 349 515
+             V250
+             C349 215 374 190 410 190 Z"/>
+
+    <!-- face divider -->
+    <path d="M350 420 H674"/>
+
+    <!-- side indicators -->
+    <path d="M300 270 V350"/>
+    <path d="M724 270 V350"/>
+  </g>
+
+  <!-- eyes -->
+  <circle cx="430" cy="345" r="22" fill="#fff"/>
+  <circle cx="594" cy="345" r="22" fill="#fff"/>
+</svg>
