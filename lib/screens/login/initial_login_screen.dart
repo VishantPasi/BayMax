@@ -1,7 +1,6 @@
-import 'dart:ui';
-
+import 'package:baymax/screens/login/sign_in_screen.dart';
+import 'package:baymax/screens/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,90 +20,92 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
     Color buttonColor,
     bool isMain,
     bool isGoogle,
+    VoidCallback onTap,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          height: 60,
 
-        decoration: BoxDecoration(
-          color: buttonColor,
-          gradient: LinearGradient(
-            begin: AlignmentGeometry.topCenter,
-            end: AlignmentGeometry.bottomCenter,
-            colors: isMain
-                ? [
-                    const Color.fromARGB(255, 227, 178, 69),
-                    const Color.fromARGB(255, 180, 124, 6),
+          decoration: BoxDecoration(
+            color: buttonColor,
+
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isMain
+                  ? const [
+                      Color.fromARGB(255, 255, 198, 75),
+                      Color.fromARGB(255, 180, 124, 6),
+                    ]
+                  : const [
+                      Color.fromARGB(255, 64, 64, 64),
+                      Color.fromARGB(255, 27, 27, 27),
+                    ],
+            ),
+
+            borderRadius: BorderRadius.circular(20),
+
+            border: !isMain
+                ? Border.all(color: const Color.fromARGB(255, 46, 46, 46))
+                : null,
+
+            boxShadow: isMain
+                ? const [
+                    BoxShadow(
+                      color: Color.fromARGB(158, 227, 177, 69),
+                      blurRadius: 50,
+                    ),
                   ]
-                : [
-                    const Color.fromARGB(255, 64, 64, 64),
-                    const Color.fromARGB(255, 27, 27, 27),
-                  ],
+                : null,
           ),
-          borderRadius: BorderRadius.circular(20),
-          border: !isMain
-              ? Border.all(color: const Color.fromARGB(255, 46, 46, 46))
-              : null,
-          boxShadow: isMain
-              ? [
-                  BoxShadow(
-                    color: Color.fromARGB(158, 227, 177, 69),
-                    blurRadius: 50,
-                  ),
-                ]
-              : [],
-        ),
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: 20),
-                !isGoogle
-                    ? FaIcon(icon, color: iconColor, size: 22)
-                    : Image.asset("assets/logo/googlelogo.png", width: 27),
-                SizedBox(width: 15),
-                Text(
-                  text,
-                  style: GoogleFonts.urbanist(
-                    color: textColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.chevron_right_outlined, color: iconColor),
-                SizedBox(width: 5),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget infoBar(String text, FaIconData icon) {
-    return SizedBox(
-      height: 50,
-      child: Row(
-        children: [
-          FaIcon(icon, color: const Color.fromARGB(255, 227, 178, 69)),
-          SizedBox(width: 10),
-          Text(
-            text,
-            style: GoogleFonts.urbanist(
-              color: Colors.white,
-              fontSize: 13,
-              letterSpacing: 1,
-            ),
+          child: Row(
+            children: [
+              // LEFT SIDE
+              Expanded(
+                child: Row(
+                  children: [
+                    const SizedBox(width: 20),
+
+                    if (isGoogle)
+                      Image.asset(
+                        "assets/logo/googlelogo.png",
+                        width: 27,
+                        height: 27,
+                      )
+                    else
+                      FaIcon(icon, color: iconColor, size: 22),
+
+                    const SizedBox(width: 15),
+
+                    Expanded(
+                      child: Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.urbanist(
+                          color: textColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // RIGHT ARROW
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: Icon(Icons.chevron_right_outlined, color: iconColor),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -112,7 +113,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(1, 10, 8, 18),
+      backgroundColor: Color.fromRGBO(15, 15, 15, 1),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -123,7 +124,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Row(
                   children: [
-                    Image.asset("assets/logo/baymaxlogo3.png", width: 50),
+                    Image.asset("assets/logo/baymaxlogo.png", width: 50),
                     SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +150,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                             Text(
                               ".",
                               style: GoogleFonts.spaceGrotesk(
-                                color: const Color.fromARGB(255, 227, 178, 69),
+                                color: Color.fromARGB(255, 255, 198, 75),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -187,7 +188,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                           Text(
                             "!",
                             style: GoogleFonts.spaceGrotesk(
-                              color: const Color.fromARGB(255, 227, 178, 69),
+                              color: Color.fromARGB(255, 255, 198, 75),
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                             ),
@@ -217,12 +218,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                               Text(
                                 "'",
                                 style: GoogleFonts.spaceGrotesk(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    227,
-                                    178,
-                                    69,
-                                  ),
+                                  color: Color.fromARGB(255, 255, 198, 75),
                                   fontSize: 23,
                                 ),
                               ),
@@ -247,12 +243,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                               Text(
                                 ".",
                                 style: GoogleFonts.spaceGrotesk(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    227,
-                                    178,
-                                    69,
-                                  ),
+                                  color: Color.fromARGB(255, 255, 198, 75),
                                   fontSize: 23,
                                 ),
                               ),
@@ -271,7 +262,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                         "Sign in to continue \nwith your conversations.",
                         style: GoogleFonts.urbanist(
                           color: Color.fromARGB(193, 253, 253, 252),
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -294,8 +285,8 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                             blurRadius: 100,
                           ),
                         ],
-                        color: const Color.fromARGB(255, 227, 178, 69),
-                        fontSize: 14,
+                        color: Color.fromARGB(255, 255, 198, 75),
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 2,
                       ),
@@ -315,8 +306,8 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                           ),
                         ],
                         letterSpacing: 2,
-                        color: const Color.fromARGB(255, 227, 178, 69),
-                        fontSize: 14,
+                        color: Color.fromARGB(255, 255, 198, 75),
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -334,8 +325,8 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                             blurRadius: 100,
                           ),
                         ],
-                        color: const Color.fromARGB(255, 227, 178, 69),
-                        fontSize: 14,
+                        color: Color.fromARGB(255, 255, 198, 75),
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 2,
                       ),
@@ -344,7 +335,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 40),
               optionsButton(
                 "Continue with Password",
                 const Color.fromARGB(255, 37, 37, 37),
@@ -353,6 +344,25 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                 Colors.white,
                 true,
                 false,
+                () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return const SignInScreen();
+                    },
+                    transitionDuration: const Duration(milliseconds: 250),
+                    reverseTransitionDuration: const Duration(
+                      milliseconds: 200,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                  ),
+                ),
               ),
               SizedBox(height: 20),
               optionsButton(
@@ -363,6 +373,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                 const Color.fromARGB(255, 202, 202, 202),
                 false,
                 true,
+                () {},
               ),
               SizedBox(height: 20),
 
@@ -374,6 +385,25 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                 const Color.fromARGB(255, 202, 202, 202),
                 false,
                 false,
+                () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return const SignUpScreen();
+                    },
+                    transitionDuration: const Duration(milliseconds: 250),
+                    reverseTransitionDuration: const Duration(
+                      milliseconds: 200,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                  ),
+                ),
               ),
               SizedBox(height: 30),
               Stack(
@@ -395,7 +425,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                     children: [
                       FaIcon(
                         FontAwesomeIcons.shieldHalved,
-                        color: const Color.fromARGB(255, 227, 178, 69),
+                        color: Color.fromARGB(255, 255, 198, 75),
                         size: 18,
                       ),
                       const SizedBox(width: 10),
@@ -404,7 +434,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                         style: GoogleFonts.urbanist(
                           letterSpacing: 2,
                           color: Colors.white,
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
