@@ -77,10 +77,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 290,
                       child: Stack(
                         children: [
-                          Image.asset(
-                            "assets/images/background_signup.png",
-                            width: size.width,
-                            height: 500,
+                          Positioned(
+                            right: 10,
+                            top: 40,
+                            child: Image.asset(
+                              "assets/images/robot4.png",
+                              width: 160
+                            ),
                           ),
                           Positioned(
                             top: 70,
@@ -90,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Beyond Storage.",
+                                  "Think Beyond.",
                                   style: GoogleFonts.urbanist(
                                     shadows: [
                                       Shadow(
@@ -110,14 +113,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
                                         colors: [
-                                          Color.fromRGBO(255, 123, 41, 1),
-                                          Color.fromRGBO(205, 70, 22, 1),
+                                           Color.fromARGB(255, 255, 198, 75),
+                                          Color.fromARGB(255, 180, 124, 6),
                                         ],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ).createShader(bounds),
                                   child: Text(
-                                    "Beyond Limits.",
+                                    "Do More.",
                                     style: GoogleFonts.urbanist(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
@@ -133,8 +136,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        Color.fromRGBO(255, 123, 41, 1),
-                                        Color.fromRGBO(205, 70, 22, 1),
+                                         Color.fromARGB(255, 255, 198, 75),
+                                          Color.fromARGB(255, 180, 124, 6),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(20),
@@ -142,7 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 SizedBox(height: 20),
                                 Text(
-                                  "The Cloud. Perfected.",
+                                  "One Agent. Every Need.",
                                   style: GoogleFonts.urbanist(
                                     shadows: [
                                       BoxShadow(
@@ -162,7 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 const SizedBox(height: 4),
 
                                 Text(
-                                  "Manage, sync, and\nscale effortlessly.",
+                                  "Think, plan, and \nexecute effortlessly.",
                                   style: GoogleFonts.urbanist(
                                     shadows: [
                                       BoxShadow(
@@ -190,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          "STORE",
+                          "PLAN",
                           style: GoogleFonts.urbanist(
                             shadows: [
                               BoxShadow(
@@ -199,7 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 blurRadius: 100,
                               ),
                             ],
-                            color: Colors.deepOrange,
+                            color: Color.fromARGB(255, 255, 198, 75),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 2,
@@ -210,7 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           style: TextStyle(color: Colors.white54, fontSize: 14),
                         ),
                         Text(
-                          "SYNC",
+                          "EXECUTE",
                           style: GoogleFonts.urbanist(
                             shadows: [
                               BoxShadow(
@@ -220,7 +223,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ],
                             letterSpacing: 2,
-                            color: Colors.deepOrange,
+                            color: Color.fromARGB(255, 255, 198, 75),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -230,7 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           style: TextStyle(color: Colors.white54, fontSize: 14),
                         ),
                         Text(
-                          "ACCESS",
+                          "ACHIEVE",
                           style: GoogleFonts.urbanist(
                             shadows: [
                               BoxShadow(
@@ -239,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 blurRadius: 100,
                               ),
                             ],
-                            color: Colors.deepOrange,
+                            color:Color.fromARGB(255, 255, 198, 75),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 2,
@@ -252,227 +255,256 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        width: size.width,
-
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 23.0,
                             ),
-                          ],
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color.fromRGBO(45, 45, 45, 0.95),
-                              Color.fromRGBO(25, 25, 25, 0.95),
-                            ],
-                          ),
-                          border: BorderDirectional(
-                            top: BorderSide(color: Colors.white24, width: 1),
-                            start: BorderSide(color: Colors.white24, width: 1),
-                            end: BorderSide(color: Colors.white24, width: 1),
-                          ),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(35),
-                            topRight: Radius.circular(35),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 30),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 23.0,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Create Your Account",
-                                    style: GoogleFonts.urbanist(
-                                      color: Colors.white70,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 5),
-                                  Text(
-                                    "Get started with your OverCloud Account",
-                                    maxLines: 2,
-                                    style: GoogleFonts.urbanist(
-                                      color: Colors.white54,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            SizedBox(height: 20),
-
-                            customTextField(
-                              "Full Name",
-                              "Enter your full name",
-                              nameController,
-                              nameFocus,
-                              Icons.person_outline,
-                              true,
-                            ),
-                            SizedBox(height: 20),
-                            customTextField(
-                              "Phone Number",
-                              "Enter your phone number",
-                              phoneController,
-                              phoneFocus,
-                              Icons.phone_outlined,
-                              false,
-                            ),
-                            SizedBox(height: 20),
-                            customTextField(
-                              "Email Address",
-                              "Enter your email",
-                              emailController,
-                              emailFocus,
-                              Icons.email_outlined,
-                              true,
-                            ),
-                            SizedBox(height: 20),
-
-                            customTextField(
-                              "Password",
-                              "Enter your password",
-                              passwordController,
-                              passwordFocus,
-                              Icons.lock_outline,
-                              true,
-                            ),
-                            SizedBox(height: 20),
-
-                            customTextField(
-                              "Confirm Password",
-                              "Enter your confirm password",
-                              confirmPasswordController,
-                              confirmPasswordFocus,
-                              Icons.verified_user_outlined,
-                              true,
-                            ),
-                            SizedBox(height: 40),
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 25.0,
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 43,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.6,
-                                        ),
-                                        blurRadius: 10,
-                                        offset: Offset(0, 5),
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.deepOrange.withValues(
-                                          alpha: 0.4,
-                                        ),
-                                        blurRadius: 10,
-                                        offset: Offset(0, -5),
-                                      ),
-                                    ],
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color.fromRGBO(255, 132, 61, 0.89),
-                                        Color.fromRGBO(233, 89, 17, 1),
-                                        Color.fromRGBO(205, 61, 0, 1),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                  ),
-                                  child: ElevatedButton(
-                                    // onPressed: () =>
-                                    //     _firebaseAuthService.signUp(
-                                    //       nameController,
-                                    //       phoneController,
-                                    //       emailController,
-                                    //       passwordController,
-                                    //       confirmPasswordController,
-                                    //       context,
-                                    //     ),
-                                    onPressed: (){},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      minimumSize: Size(size.width, 45),
-
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SizedBox(),
-                                        Text(
-                                          "Create Account",
-                                          style: GoogleFonts.urbanist(
-                                            color: Colors.white70,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        FaIcon(
-                                          FontAwesomeIcons.arrowRight,
-                                          color: Colors.white70,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Already have an account?  ",
+                                  "Create Your Account",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                      
+                                SizedBox(height: 5),
+                                Text(
+                                  "Get started with your OverCloud Account",
+                                  maxLines: 2,
                                   style: GoogleFonts.urbanist(
                                     color: Colors.white54,
                                     fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "Sign In",
-                                    style: GoogleFonts.urbanist(
-                                      color: Colors.deepOrange,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 40),
-                          ],
+                          ),
+                      
+                          SizedBox(height: 20),
+                      
+                          customTextField(
+                            "Full Name",
+                            "Enter your full name",
+                            nameController,
+                            nameFocus,
+                            Icons.person_outline,
+                            true,
+                          ),
+                          SizedBox(height: 20),
+                          customTextField(
+                            "Phone Number",
+                            "Enter your phone number",
+                            phoneController,
+                            phoneFocus,
+                            Icons.phone_outlined,
+                            false,
+                          ),
+                          SizedBox(height: 20),
+                          customTextField(
+                            "Email Address",
+                            "Enter your email",
+                            emailController,
+                            emailFocus,
+                            Icons.email_outlined,
+                            true,
+                          ),
+                          SizedBox(height: 20),
+                      
+                          customTextField(
+                            "Password",
+                            "Enter your password",
+                            passwordController,
+                            passwordFocus,
+                            Icons.lock_outline,
+                            true,
+                          ),
+                          SizedBox(height: 20),
+                      
+                          customTextField(
+                            "Confirm Password",
+                            "Enter your confirm password",
+                            confirmPasswordController,
+                            confirmPasswordFocus,
+                            Icons.verified_user_outlined,
+                            true,
+                          ),
+                          SizedBox(height: 40),
+
+                          Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 25.0,
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color.fromARGB(158, 227, 177, 69),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(255, 255, 182, 25),
+                                    Color.fromARGB(255, 180, 124, 6),
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
+                              // child: ElevatedButton(
+                              //   onPressed: () {
+                              //     FocusScope.of(context).unfocus();
+
+                              //     // _firebaseAuthService.signIn(
+                              //     //   emailController,
+                              //     //   passwordController,
+                              //     //   context,
+                              //     // );
+                              //   },
+                              //   style: ElevatedButton.styleFrom(
+                              //     backgroundColor: Colors.transparent,
+                              //     minimumSize: Size(size.width, 60),
+
+                              //     shape: RoundedRectangleBorder(
+                              //       borderRadius: BorderRadius.circular(20),
+                              //     ),
+                              //   ),
+                              child: Center(
+                                child: Text(
+                                  "SIGN UP",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // ),
                         ),
+                          // Center(
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.symmetric(
+                          //       horizontal: 25.0,
+                          //     ),
+                          //     child: Container(
+                          //       width: double.infinity,
+                          //       height: 43,
+                          //       decoration: BoxDecoration(
+                          //         borderRadius: BorderRadius.circular(12),
+                          //         boxShadow: [
+                          //           BoxShadow(
+                          //             color: Colors.black.withValues(
+                          //               alpha: 0.6,
+                          //             ),
+                          //             blurRadius: 10,
+                          //             offset: Offset(0, 5),
+                          //           ),
+                          //           BoxShadow(
+                          //             color: Color.fromARGB(255, 255, 198, 75).withValues(
+                          //               alpha: 0.4,
+                          //             ),
+                          //             blurRadius: 10,
+                          //             offset: Offset(0, -5),
+                          //           ),
+                          //         ],
+                          //         gradient: const LinearGradient(
+                          //           colors: [
+                          //             Color.fromRGBO(255, 132, 61, 0.89),
+                          //             Color.fromRGBO(233, 89, 17, 1),
+                          //             Color.fromRGBO(205, 61, 0, 1),
+                          //           ],
+                          //           begin: Alignment.topLeft,
+                          //           end: Alignment.bottomRight,
+                          //         ),
+                          //       ),
+                          //       child: ElevatedButton(
+                          //         // onPressed: () =>
+                          //         //     _firebaseAuthService.signUp(
+                          //         //       nameController,
+                          //         //       phoneController,
+                          //         //       emailController,
+                          //         //       passwordController,
+                          //         //       confirmPasswordController,
+                          //         //       context,
+                          //         //     ),
+                          //         onPressed: (){},
+                          //         style: ElevatedButton.styleFrom(
+                          //           backgroundColor: Colors.transparent,
+                          //           minimumSize: Size(size.width, 45),
+                      
+                          //           shape: RoundedRectangleBorder(
+                          //             borderRadius: BorderRadius.circular(15),
+                          //           ),
+                          //         ),
+                          //         child: Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             SizedBox(),
+                          //             Text(
+                          //               "Create Account",
+                          //               style: GoogleFonts.urbanist(
+                          //                 color: Colors.white70,
+                          //                 fontSize: 16,
+                          //                 fontWeight: FontWeight.bold,
+                          //               ),
+                          //             ),
+                          //             FaIcon(
+                          //               FontAwesomeIcons.arrowRight,
+                          //               color: Colors.white70,
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                      
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account?  ",
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white54,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "Sign In",
+                                  style: GoogleFonts.urbanist(
+                                    color: Color.fromARGB(255, 255, 182, 25),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 40),
+                        ],
                       ),
                     ),
                   ],
@@ -530,7 +562,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ? Text(
                       " *",
                       style: GoogleFonts.urbanist(
-                        color: Colors.deepOrange.withValues(alpha: 0.7),
+                        color: Color.fromARGB(255, 255, 182, 25),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -561,7 +593,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Icon(icon, color: Colors.white54, size: 25),
+                  child: Icon(icon, color: Color.fromARGB(255, 255, 182, 25).withValues(alpha: 0.7), size: 25),
                 ),
                 Expanded(
                   child: TextField(
@@ -585,7 +617,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         FocusScope.of(context).requestFocus(passwordFocus);
                       } else {}
                     },
-                    cursorColor: Colors.deepOrange.withValues(alpha: 0.6),
+                    cursorColor: Color.fromARGB(255, 255, 182, 25),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: hint,

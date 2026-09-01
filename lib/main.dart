@@ -1,3 +1,4 @@
+import 'package:baymax/screens/home_screen.dart';
 import 'package:baymax/screens/login/initial_login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'BayMax',
       debugShowCheckedModeBanner: false,
-      
-      home: InitialLoginScreen());
+
+      home: InitialLoginScreen()
+      // home: HomeScreen(),
+    );
   }
 }

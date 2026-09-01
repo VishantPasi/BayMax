@@ -74,8 +74,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Stack(
                         children: [
                           Positioned(
-                            top: 20,
-                            right: 0,child: Lottie.asset("assets/animations/ai.json",width: 210)),
+                            top: 50,
+                            right: 10,
+                            child: Image.asset(
+                              "assets/images/robot2.png",
+                              width: 160,
+                            ),
+                          ),
                           Positioned(
                             top: 70,
                             left: 20,
@@ -246,11 +251,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 30),
-                                        
+
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 23.0,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 23.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -267,19 +270,14 @@ class _SignInScreenState extends State<SignInScreen> {
                                   Text(
                                     " !",
                                     style: GoogleFonts.urbanist(
-                                      color: Color.fromARGB(
-                                        255,
-                                        255,
-                                        198,
-                                        75,
-                                      ),
+                                      color: Color.fromARGB(255, 255, 198, 75),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                                        
+
                               SizedBox(height: 5),
                               Text(
                                 "Sign in to your BayMax Account",
@@ -293,7 +291,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                         ),
-                                        
+
                         SizedBox(height: 20),
                         customTextField(
                           "Email",
@@ -312,12 +310,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         SizedBox(height: 10),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
                                 children: [
@@ -348,12 +343,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: Text(
                                   "Forgot Password?",
                                   style: GoogleFonts.urbanist(
-                                    color: Color.fromARGB(
-                                      255,
-                                      255,
-                                      198,
-                                      75,
-                                    ),
+                                    color: Color.fromARGB(255, 255, 198, 75),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 13,
                                   ),
@@ -375,12 +365,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: const [
                                   BoxShadow(
-                                    color: Color.fromARGB(
-                                      158,
-                                      227,
-                                      177,
-                                      69,
-                                    ),
+                                    color: Color.fromARGB(158, 227, 177, 69),
                                     blurRadius: 20,
                                   ),
                                 ],
@@ -396,7 +381,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               // child: ElevatedButton(
                               //   onPressed: () {
                               //     FocusScope.of(context).unfocus();
-                                        
+
                               //     // _firebaseAuthService.signIn(
                               //     //   emailController,
                               //     //   passwordController,
@@ -406,171 +391,68 @@ class _SignInScreenState extends State<SignInScreen> {
                               //   style: ElevatedButton.styleFrom(
                               //     backgroundColor: Colors.transparent,
                               //     minimumSize: Size(size.width, 60),
-                                        
+
                               //     shape: RoundedRectangleBorder(
                               //       borderRadius: BorderRadius.circular(20),
                               //     ),
                               //   ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(),
-                                    Text(
-                                      "SIGN IN",
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    FaIcon(
-                                      FontAwesomeIcons.arrowRight,
-                                      color: Colors.black,
-                                    ),
-                                  ],
+                              child: Center(
+                                child: Text(
+                                  "SIGN IN",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2,
+                                  ),
                                 ),
                               ),
                             ),
+                          ),
                           // ),
                         ),
                         SizedBox(height: 25),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0,
-                                  ),
-                                  child: Container(
-                                    height: 0.3,
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "Or Continue With",
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white54,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0,
-                                  ),
-                                  child: Container(
-                                    height: 0.3,
-                                    width: double.infinity,
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0,
-                            ),
-                            child: Container(
-                              height: 45,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(
-                                      alpha: 0.4,
-                                    ),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 5),
-                                  ),
-                                ],
-                                border: Border.all(
-                                  color: Colors.white24,
-                                  width: 0.5,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromRGBO(29, 29, 29, 1),
-                              ),
-                              child: ElevatedButton(
-                                // onPressed: () => _firebaseAuthService
-                                //     .signInWithGoogle(context),
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                        
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                  children: [
-                                    // Image.asset(
-                                    //   "assets/logos/google_logo.png",
-                                    //   width: 20,
-                                    //   height: 20,
-                                    // ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "Google",
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.white70,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+
+                        Stack(
                           children: [
-                            Text(
-                              "Don't have an account?  ",
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white54,
-                                fontSize: 14,
-                              ),
+                            Image.asset(
+                              "assets/images/waves2.png",
+                              fit: BoxFit.cover,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                emailFocus.unfocus();
-                                passwordFocus.unfocus();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignUpScreen(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account?  ",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white54,
+                                    fontSize: 14,
                                   ),
-                                );
-                              },
-                              child: Text(
-                                "Sign Up",
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.deepOrange,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
                                 ),
-                              ),
+                                GestureDetector(
+                                  onTap: () {
+                                    emailFocus.unfocus();
+                                    passwordFocus.unfocus();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SignUpScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Sign Up",
+                                    style: GoogleFonts.urbanist(
+                                      color: Color.fromARGB(255, 255, 198, 75),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        SizedBox(height: 40),
                       ],
                     ),
                   ],
@@ -611,7 +493,11 @@ class _SignInScreenState extends State<SignInScreen> {
               obscure = !obscure;
             });
           },
-          icon: FaIcon(FontAwesomeIcons.eye, color: Colors.white54, size: 20),
+          icon: FaIcon(
+            FontAwesomeIcons.eye,
+            color: Color.fromARGB(255, 255, 198, 75).withValues(alpha: 0.7),
+            size: 20,
+          ),
         ),
       );
     } else {
@@ -625,7 +511,7 @@ class _SignInScreenState extends State<SignInScreen> {
           },
           icon: FaIcon(
             FontAwesomeIcons.eyeSlash,
-            color: Colors.white54,
+            color: Color.fromARGB(255, 255, 198, 75).withValues(alpha: 0.7),
             size: 20,
           ),
         ),
@@ -661,7 +547,11 @@ class _SignInScreenState extends State<SignInScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(icon, color: Colors.white54, size: 25),
+              child: Icon(
+                icon,
+                color: Color.fromARGB(255, 255, 198, 75).withValues(alpha: 0.7),
+                size: 25,
+              ),
             ),
             Expanded(
               child: TextField(
@@ -684,7 +574,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     // );
                   }
                 },
-                cursorColor: Colors.deepOrange.withValues(alpha: 0.6),
+                cursorColor: Color.fromARGB(255, 255, 198, 75),
 
                 decoration: InputDecoration(
                   border: InputBorder.none,

@@ -1,6 +1,7 @@
 import 'package:baymax/screens/login/sign_in_screen.dart';
 import 'package:baymax/screens/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -112,337 +113,343 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(15, 15, 15, 1),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Row(
-                  children: [
-                    Image.asset("assets/logo/baymaxlogo.png", width: 50),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "BayMax",
-                          style: GoogleFonts.spaceGrotesk(
-                            color: Color.fromARGB(255, 253, 253, 252),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Your Personal Agent",
-                              style: GoogleFonts.spaceGrotesk(
-                                color: Color.fromARGB(255, 253, 253, 252),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              ".",
-                              style: GoogleFonts.spaceGrotesk(
-                                color: Color.fromARGB(255, 255, 198, 75),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              Stack(
-                children: [
-                  SizedBox(height: 250, width: double.infinity),
-                  Positioned(
-                    right: -40,
-                    top: 0,
-                    child: Image.asset("assets/images/robot.png", width: 200),
-                  ),
-                  Positioned(
-                    top: 20,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Welcome Back",
-                            style: GoogleFonts.spaceGrotesk(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "!",
-                            style: GoogleFonts.spaceGrotesk(
-                              color: Color.fromARGB(255, 255, 198, 75),
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  Positioned(
-                    bottom: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Color.fromRGBO(15, 15, 15, 1),
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(15, 15, 15, 1),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Row(
+                    children: [
+                      Image.asset("assets/logo/baymaxlogo.png", width: 50),
+                      SizedBox(width: 10),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Let",
-                                style: GoogleFonts.spaceGrotesk(
-                                  color: Color.fromARGB(255, 253, 253, 252),
-                                  fontSize: 23,
-                                ),
-                              ),
-                              Text(
-                                "'",
-                                style: GoogleFonts.spaceGrotesk(
-                                  color: Color.fromARGB(255, 255, 198, 75),
-                                  fontSize: 23,
-                                ),
-                              ),
-                              Text(
-                                "s Pick Up ",
-                                style: GoogleFonts.spaceGrotesk(
-                                  color: Color.fromARGB(255, 253, 253, 252),
-                                  fontSize: 23,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            "BayMax",
+                            style: GoogleFonts.spaceGrotesk(
+                              color: Color.fromARGB(255, 253, 253, 252),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Row(
                             children: [
                               Text(
-                                "where you left off",
+                                "Your Personal Agent",
                                 style: GoogleFonts.spaceGrotesk(
                                   color: Color.fromARGB(255, 253, 253, 252),
-                                  fontSize: 23,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               Text(
                                 ".",
                                 style: GoogleFonts.spaceGrotesk(
                                   color: Color.fromARGB(255, 255, 198, 75),
-                                  fontSize: 23,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
-                  SizedBox(height: 10),
-                  Positioned(
-                    bottom: 40,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        "Sign in to continue \nwith your conversations.",
-                        style: GoogleFonts.urbanist(
-                          color: Color.fromARGB(193, 253, 253, 252),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                ),
+                SizedBox(height: 20),
+                Stack(
+                  children: [
+                    SizedBox(height: 250, width: double.infinity),
+                    Positioned(
+                      right: 0,
+                      top: 10,
+                      child: Image.asset("assets/images/robot3.png", width: 160),
+                    ),
+                    Positioned(
+                      top: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Welcome Back",
+                              style: GoogleFonts.spaceGrotesk(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "!",
+                              style: GoogleFonts.spaceGrotesk(
+                                color: Color.fromARGB(255, 255, 198, 75),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "SECURE",
-                      style: GoogleFonts.urbanist(
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            offset: Offset(0, 0),
-                            blurRadius: 100,
-                          ),
-                        ],
-                        color: Color.fromARGB(255, 255, 198, 75),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2,
+      
+                    Positioned(
+                      bottom: 100,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Let",
+                                  style: GoogleFonts.spaceGrotesk(
+                                    color: Color.fromARGB(255, 253, 253, 252),
+                                    fontSize: 23,
+                                  ),
+                                ),
+                                Text(
+                                  "'",
+                                  style: GoogleFonts.spaceGrotesk(
+                                    color: Color.fromARGB(255, 255, 198, 75),
+                                    fontSize: 23,
+                                  ),
+                                ),
+                                Text(
+                                  "s Pick Up ",
+                                  style: GoogleFonts.spaceGrotesk(
+                                    color: Color.fromARGB(255, 253, 253, 252),
+                                    fontSize: 23,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "where you left off",
+                                  style: GoogleFonts.spaceGrotesk(
+                                    color: Color.fromARGB(255, 253, 253, 252),
+                                    fontSize: 23,
+                                  ),
+                                ),
+                                Text(
+                                  ".",
+                                  style: GoogleFonts.spaceGrotesk(
+                                    color: Color.fromARGB(255, 255, 198, 75),
+                                    fontSize: 23,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Text(
-                      "✦",
-                      style: TextStyle(color: Colors.white54, fontSize: 14),
-                    ),
-                    Text(
-                      "SCALABLE",
-                      style: GoogleFonts.urbanist(
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            offset: Offset(0, 0),
-                            blurRadius: 100,
+                    SizedBox(height: 10),
+                    Positioned(
+                      bottom: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          "Sign in to continue \nwith your conversations.",
+                          style: GoogleFonts.urbanist(
+                            color: Color.fromARGB(193, 253, 253, 252),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
-                        ],
-                        letterSpacing: 2,
-                        color: Color.fromARGB(255, 255, 198, 75),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "✦",
-                      style: TextStyle(color: Colors.white54, fontSize: 14),
-                    ),
-                    Text(
-                      "LIMITLESS",
-                      style: GoogleFonts.urbanist(
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            offset: Offset(0, 0),
-                            blurRadius: 100,
-                          ),
-                        ],
-                        color: Color.fromARGB(255, 255, 198, 75),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-
-              SizedBox(height: 40),
-              optionsButton(
-                "Continue with Password",
-                const Color.fromARGB(255, 37, 37, 37),
-                FontAwesomeIcons.lock,
-                const Color.fromARGB(255, 37, 37, 37),
-                Colors.white,
-                true,
-                false,
-                () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return const SignInScreen();
-                    },
-                    transitionDuration: const Duration(milliseconds: 250),
-                    reverseTransitionDuration: const Duration(
-                      milliseconds: 200,
-                    ),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              optionsButton(
-                "Continue with Google",
-                Colors.white,
-                FontAwesomeIcons.google,
-                Colors.white,
-                const Color.fromARGB(255, 202, 202, 202),
-                false,
-                true,
-                () {},
-              ),
-              SizedBox(height: 20),
-
-              optionsButton(
-                "Sign Up",
-                Colors.white,
-                FontAwesomeIcons.userPlus,
-                Colors.white,
-                const Color.fromARGB(255, 202, 202, 202),
-                false,
-                false,
-                () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return const SignUpScreen();
-                    },
-                    transitionDuration: const Duration(milliseconds: 250),
-                    reverseTransitionDuration: const Duration(
-                      milliseconds: 200,
-                    ),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              Stack(
-                children: [
-                  const SizedBox(height: 150, width: double.infinity),
-
-                  Positioned(
-                    bottom: 25,
-                    left: 0,
-                    right: 0,
-                    child: Image.asset(
-                      "assets/images/waves.png",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      FaIcon(
-                        FontAwesomeIcons.shieldHalved,
-                        color: Color.fromARGB(255, 255, 198, 75),
-                        size: 18,
-                      ),
-                      const SizedBox(width: 10),
                       Text(
-                        "Your data is safe with us.",
+                        "SECURE",
                         style: GoogleFonts.urbanist(
-                          letterSpacing: 2,
-                          color: Colors.white,
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              offset: Offset(0, 0),
+                              blurRadius: 100,
+                            ),
+                          ],
+                          color: Color.fromARGB(255, 255, 198, 75),
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      Text(
+                        "✦",
+                        style: TextStyle(color: Colors.white54, fontSize: 14),
+                      ),
+                      Text(
+                        "SCALABLE",
+                        style: GoogleFonts.urbanist(
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              offset: Offset(0, 0),
+                              blurRadius: 100,
+                            ),
+                          ],
+                          letterSpacing: 2,
+                          color: Color.fromARGB(255, 255, 198, 75),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        "✦",
+                        style: TextStyle(color: Colors.white54, fontSize: 14),
+                      ),
+                      Text(
+                        "LIMITLESS",
+                        style: GoogleFonts.urbanist(
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              offset: Offset(0, 0),
+                              blurRadius: 100,
+                            ),
+                          ],
+                          color: Color.fromARGB(255, 255, 198, 75),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+      
+                SizedBox(height: 40),
+                optionsButton(
+                  "Continue with Password",
+                  const Color.fromARGB(255, 37, 37, 37),
+                  FontAwesomeIcons.lock,
+                  const Color.fromARGB(255, 37, 37, 37),
+                  Colors.white,
+                  true,
+                  false,
+                  () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return const SignInScreen();
+                      },
+                      transitionDuration: const Duration(milliseconds: 250),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 200,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                optionsButton(
+                  "Continue with Google",
+                  Colors.white,
+                  FontAwesomeIcons.google,
+                  Colors.white,
+                  const Color.fromARGB(255, 202, 202, 202),
+                  false,
+                  true,
+                  () {},
+                ),
+                SizedBox(height: 20),
+      
+                optionsButton(
+                  "Sign Up",
+                  Colors.white,
+                  FontAwesomeIcons.userPlus,
+                  Colors.white,
+                  const Color.fromARGB(255, 202, 202, 202),
+                  false,
+                  false,
+                  () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return const SignUpScreen();
+                      },
+                      transitionDuration: const Duration(milliseconds: 250),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 200,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Stack(
+                  children: [
+                    const SizedBox(height: 150, width: double.infinity),
+      
+                    Positioned(
+                      bottom: 25,
+                      left: 0,
+                      right: 0,
+                      child: Image.asset(
+                        "assets/images/waves2.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+      
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.shieldHalved,
+                          color: Color.fromARGB(255, 255, 198, 75),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          "Your data is safe with us.",
+                          style: GoogleFonts.urbanist(
+                            letterSpacing: 2,
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
