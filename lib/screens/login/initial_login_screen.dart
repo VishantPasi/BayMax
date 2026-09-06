@@ -130,7 +130,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Row(
                     children: [
-                      Image.asset("assets/logo/baymaxlogo.png", width: 50),
+                      Image.asset("assets/logo/applogo_transparent.png", width: 50),
                       SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
