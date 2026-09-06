@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'BayMax',
       debugShowCheckedModeBanner: false,
 
-      home: InitialLoginScreen()
-      // home: HomeScreen(),
+      // home: InitialLoginScreen()
+      home: HomeScreen(),
     );
   }
 }
