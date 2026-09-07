@@ -68,7 +68,7 @@ flutter:
     - assets/logo/
     - assets/
     - assets/images/
-    - assets/animations/
+    # - assets/animations/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

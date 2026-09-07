@@ -43,6 +43,141 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Scaffold(
         backgroundColor: Color.fromRGBO(15, 15, 15, 1),
+        drawer: Drawer(
+          backgroundColor: Color.fromRGBO(15, 15, 15, 1),
+          child: SafeArea(
+            child: Column(
+              children: [
+                Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // color: Color.fromRGBO(40, 40, 40, 1),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 254, 191, 52),
+                                          Color.fromARGB(255, 183, 114, 2),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/logo/applogo_transparent.png",
+                        width: 100,
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "Bay",
+                                style: GoogleFonts.urbanist(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color.fromARGB(255, 255, 255, 255),
+                                ),
+                              ),
+                              Text(
+                                "Max",
+                                style: GoogleFonts.urbanist(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 198, 75),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Your AI Companion \nBeyond Limits.",
+                            style: GoogleFonts.urbanist(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.user, color: Colors.white),
+                  title: Text(
+                    "Profile",
+                    style: GoogleFonts.urbanist(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    // Handle Profile tap
+                  },
+                ),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.gear, color: Colors.white),
+                  title: Text(
+                    "Settings",
+                    style: GoogleFonts.urbanist(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    // Handle Settings tap
+                  },
+                ),
+                Spacer(),
+                Image.asset(  
+                  "assets/images/drawer_image.png",
+                  width: double.infinity,  ),
+                Text(
+                  "Version 1.0.0",
+                  style: GoogleFonts.urbanist(
+                    fontSize: 14,
+                    color: Colors.white54,
+                  ),
+                ),
+                Center(
+                  child: ListTile(
+                    title: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.rightFromBracket,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "Logout",
+                            style: GoogleFonts.urbanist(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      // Handle Logout tap
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         body: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
@@ -127,13 +262,28 @@ class _HomeScreenState extends State<HomeScreen> {
 class HomeContent extends StatefulWidget {
   final NotchBottomBarController? controller;
 
-  const HomeContent({Key? key, this.controller}) : super(key: key);
+  const HomeContent({super.key, this.controller});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
 }
 
 class _HomeContentState extends State<HomeContent> {
+  int maxLines = 1;
+  double containerHeight = 120;
+
+  int maxHeight() {
+    if (maxLines == 1) {
+      return 120;
+    } else if (maxLines == 2) {
+      return 150;
+    } else if (maxLines == 3) {
+      return 180;
+    } else {
+      return 210;
+    }
+  }
+
   Widget recentActivity(String title, String subtitle, String time) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,10 +379,15 @@ class _HomeContentState extends State<HomeContent> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FaIcon(
-                    FontAwesomeIcons.barsStaggered,
-                    color: Color.fromARGB(255, 255, 198, 75),
-                    size: 22,
+                  GestureDetector(
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    child: FaIcon(
+                      FontAwesomeIcons.barsStaggered,
+                      color: Color.fromARGB(255, 255, 198, 75),
+                      size: 22,
+                    ),
                   ),
                   Row(
                     children: [
@@ -241,13 +396,25 @@ class _HomeContentState extends State<HomeContent> {
                         width: 40,
                       ),
                       SizedBox(width: 5),
-                      Text(
-                        "BayMax",
-                        style: GoogleFonts.urbanist(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Bay",
+                            style: GoogleFonts.urbanist(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            "Max",
+                            style: GoogleFonts.urbanist(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 198, 75),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -264,7 +431,7 @@ class _HomeContentState extends State<HomeContent> {
                 Positioned(
                   right: 0,
 
-                  child: Image.asset("assets/images/robot6.png", width: 170),
+                  child: Image.asset("assets/images/home_screen_robot.png", width: 170),
                 ),
 
                 Positioned(
@@ -309,9 +476,10 @@ class _HomeContentState extends State<HomeContent> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Container(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 200),
                 width: double.infinity,
-                height: 120,
+
                 decoration: BoxDecoration(
                   // color: Color.fromARGB(40, 255, 255, 255),
                   borderRadius: BorderRadius.circular(20),
@@ -333,80 +501,102 @@ class _HomeContentState extends State<HomeContent> {
                   //   ),
                   // ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10,
-                          ),
-                          child: TextField(
-                            maxLines: 3,
-                            cursorColor: Colors.white,
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 25.0,
+                        vertical: 5,
+                      ),
+                      child: TextField(
+                        minLines: 1,
+                        maxLines: 3,
+                        keyboardType: TextInputType.multiline,
+                        cursorColor: Colors.white,
+                        style: GoogleFonts.urbanist(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        onChanged: (value) => setState(() {
+                          maxLines = value.split('\n').length;
+                          containerHeight = maxHeight().toDouble();
+                        }),
 
-                            decoration: InputDecoration(
-                              hintText: "Ask me anything...",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(color: Colors.white),
-                              hoverColor: Colors.white,
-                            ),
-                          ),
+                        decoration: InputDecoration(
+                          hintText: "Ask me anything...",
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                          hoverColor: Colors.white,
                         ),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color.fromARGB(31, 0, 0, 0),
-                              ),
-                              child: Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.microphone,
-                                  color: Colors.white,
-                                  size: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Row(
+                          //   children: [
+                          //     SizedBox(width: 20),
+                          //     Container(
+                          //           height: 40,
+                          //           width: 40,
+                          //           decoration: BoxDecoration(
+                          //             borderRadius: BorderRadius.circular(15),
+                          //             color: Color.fromARGB(31, 0, 0, 0),
+                          //           ),
+                          //           child: Center(
+                          //             child: FaIcon(
+                          //               FontAwesomeIcons.paperclip,
+                          //               color: Colors.white,
+                          //               size: 16,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //   ],
+                          // ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color.fromARGB(31, 0, 0, 0),
+                                ),
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.microphone,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 10),
+                              SizedBox(width: 10),
 
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color.fromARGB(31, 0, 0, 0),
-                              ),
-                              child: Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.paperPlane,
-                                  color: Colors.white,
-                                  size: 20,
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color.fromARGB(31, 0, 0, 0),
+                                ),
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.paperPlane,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                              SizedBox(width: 20),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

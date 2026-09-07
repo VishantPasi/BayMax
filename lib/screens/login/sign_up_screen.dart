@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             right: 10,
                             top: 40,
                             child: Image.asset(
-                              "assets/images/robot4.png",
+                              "assets/images/sign_up_robot.png",
                               width: 160
                             ),
                           ),

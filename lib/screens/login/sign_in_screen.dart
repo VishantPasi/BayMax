@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+// ignore: unused_import
 import 'package:lottie/lottie.dart';
 // import 'package:overcloud/firebase/firebase_auth_service.dart';
 
@@ -44,7 +45,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -77,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             top: 50,
                             right: 10,
                             child: Image.asset(
-                              "assets/images/robot2.png",
+                              "assets/images/sign_in_robot.png",
                               width: 160,
                             ),
                           ),
@@ -416,7 +416,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         Stack(
                           children: [
                             Image.asset(
-                              "assets/images/waves2.png",
+                              "assets/images/waves.png",
                               fit: BoxFit.cover,
                             ),
                             Row(

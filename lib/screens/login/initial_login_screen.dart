@@ -175,7 +175,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                     Positioned(
                       right: 0,
                       top: 10,
-                      child: Image.asset("assets/images/robot3.png", width: 160),
+                      child: Image.asset("assets/images/initial_login_robot.png", width: 160),
                     ),
                     Positioned(
                       top: 20,
@@ -421,7 +421,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                       left: 0,
                       right: 0,
                       child: Image.asset(
-                        "assets/images/waves2.png",
+                        "assets/images/waves.png",
                         fit: BoxFit.cover,
                       ),
                     ),
