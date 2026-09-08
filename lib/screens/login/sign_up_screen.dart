@@ -1,3 +1,9 @@
+import 'package:baymax/models/RequestModels/sign_up_request_model.dart';
+import 'package:baymax/network/apiHandling/auth.dart';
+import 'package:baymax/network/api_client_factory.dart';
+import 'package:baymax/retrofit/rest_client.dart';
+import 'package:baymax/retrofit/retrofit_service.dart';
+import 'package:baymax/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,7 +52,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Color.fromRGBO(15, 15, 15, 1),
@@ -80,7 +85,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             top: 40,
                             child: Image.asset(
                               "assets/images/sign_up_robot.png",
-                              width: 160
+                              width: 160,
                             ),
                           ),
                           Positioned(
@@ -111,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
                                         colors: [
-                                           Color.fromARGB(255, 255, 198, 75),
+                                          Color.fromARGB(255, 255, 198, 75),
                                           Color.fromARGB(255, 180, 124, 6),
                                         ],
                                         begin: Alignment.topLeft,
@@ -134,8 +139,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                         Color.fromARGB(255, 255, 198, 75),
-                                          Color.fromARGB(255, 180, 124, 6),
+                                        Color.fromARGB(255, 255, 198, 75),
+                                        Color.fromARGB(255, 180, 124, 6),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(20),
@@ -240,7 +245,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 blurRadius: 100,
                               ),
                             ],
-                            color:Color.fromARGB(255, 255, 198, 75),
+                            color: Color.fromARGB(255, 255, 198, 75),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 2,
@@ -272,7 +277,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                      
+
                                 SizedBox(height: 5),
                                 Text(
                                   "Get started with your OverCloud Account",
@@ -287,9 +292,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ],
                             ),
                           ),
-                      
+
                           SizedBox(height: 20),
-                      
+
                           customTextField(
                             "Full Name",
                             "Enter your full name",
@@ -317,7 +322,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             true,
                           ),
                           SizedBox(height: 20),
-                      
+
                           customTextField(
                             "Password",
                             "Enter your password",
@@ -327,7 +332,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             true,
                           ),
                           SizedBox(height: 20),
-                      
+
                           customTextField(
                             "Confirm Password",
                             "Enter your confirm password",
@@ -339,63 +344,85 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           SizedBox(height: 40),
 
                           Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 25.0,
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromARGB(158, 227, 177, 69),
-                                    blurRadius: 20,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25.0,
+                              ),
+                              child: GestureDetector(
+                                onTap: (){
+
+                                  
+                                  Auth auth = Auth();
+                                  auth.signUp(
+                                    context,
+                                    emailController.text,
+                                    passwordController.text,
+                                    phoneController.text,
+                                    nameController.text,
+                                  );
+
+                                  
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color.fromARGB(
+                                          158,
+                                          227,
+                                          177,
+                                          69,
+                                        ),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color.fromARGB(255, 255, 182, 25),
+                                        Color.fromARGB(255, 180, 124, 6),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
                                   ),
-                                ],
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color.fromARGB(255, 255, 182, 25),
-                                    Color.fromARGB(255, 180, 124, 6),
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
+                                  // child: ElevatedButton(
+                                  //   onPressed: () {
+                                  //     FocusScope.of(context).unfocus();
+
+                                  //     // _firebaseAuthService.signIn(
+                                  //     //   emailController,
+                                  //     //   passwordController,
+                                  //     //   context,
+                                  //     // );
+                                  //   },
+                                  //   style: ElevatedButton.styleFrom(
+                                  //     backgroundColor: Colors.transparent,
+                                  //     minimumSize: Size(size.width, 60),
+
+                                  //     shape: RoundedRectangleBorder(
+                                  //       borderRadius: BorderRadius.circular(20),
+                                  //     ),
+                                  //   ),
+                                  child: Center(
+                                    child: Text(
+                                      "SIGN UP",
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              // child: ElevatedButton(
-                              //   onPressed: () {
-                              //     FocusScope.of(context).unfocus();
-
-                              //     // _firebaseAuthService.signIn(
-                              //     //   emailController,
-                              //     //   passwordController,
-                              //     //   context,
-                              //     // );
-                              //   },
-                              //   style: ElevatedButton.styleFrom(
-                              //     backgroundColor: Colors.transparent,
-                              //     minimumSize: Size(size.width, 60),
-
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(20),
-                              //     ),
-                              //   ),
-                              child: Center(
-                                child: Text(
-                                  "SIGN UP",
-                                  style: GoogleFonts.urbanist(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2
-                                  ),
-                                ),
-                              ),
                             ),
+                            // ),
                           ),
-                          // ),
-                        ),
+
                           // Center(
                           //   child: Padding(
                           //     padding: const EdgeInsets.symmetric(
@@ -446,7 +473,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           //         style: ElevatedButton.styleFrom(
                           //           backgroundColor: Colors.transparent,
                           //           minimumSize: Size(size.width, 45),
-                      
+
                           //           shape: RoundedRectangleBorder(
                           //             borderRadius: BorderRadius.circular(15),
                           //           ),
@@ -474,7 +501,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           //     ),
                           //   ),
                           // ),
-                      
                           SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -591,7 +617,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Icon(icon, color: Color.fromARGB(255, 255, 182, 25).withValues(alpha: 0.7), size: 25),
+                  child: Icon(
+                    icon,
+                    color: Color.fromARGB(
+                      255,
+                      255,
+                      182,
+                      25,
+                    ).withValues(alpha: 0.7),
+                    size: 25,
+                  ),
                 ),
                 Expanded(
                   child: TextField(

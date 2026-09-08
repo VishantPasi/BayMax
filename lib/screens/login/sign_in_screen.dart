@@ -1,3 +1,5 @@
+import 'package:baymax/network/apiHandling/auth.dart';
+import 'package:baymax/screens/home_screen.dart';
 import 'package:baymax/screens/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,7 +47,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Color.fromRGBO(15, 15, 15, 1),
@@ -358,52 +359,47 @@ class _SignInScreenState extends State<SignInScreen> {
                             padding: const EdgeInsets.symmetric(
                               horizontal: 25.0,
                             ),
-                            child: Container(
-                              width: double.infinity,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromARGB(158, 227, 177, 69),
-                                    blurRadius: 20,
-                                  ),
-                                ],
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color.fromARGB(255, 255, 182, 25),
-                                    Color.fromARGB(255, 180, 124, 6),
+                            child: GestureDetector(
+                              onTap: () {
+                                // Handle sign-in logic here
+                                Auth auth = Auth();
+                                auth.signIn(
+                                  context,
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                                
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color.fromARGB(158, 227, 177, 69),
+                                      blurRadius: 20,
+                                    ),
                                   ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 255, 182, 25),
+                                      Color.fromARGB(255, 180, 124, 6),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
                                 ),
-                              ),
-                              // child: ElevatedButton(
-                              //   onPressed: () {
-                              //     FocusScope.of(context).unfocus();
-
-                              //     // _firebaseAuthService.signIn(
-                              //     //   emailController,
-                              //     //   passwordController,
-                              //     //   context,
-                              //     // );
-                              //   },
-                              //   style: ElevatedButton.styleFrom(
-                              //     backgroundColor: Colors.transparent,
-                              //     minimumSize: Size(size.width, 60),
-
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(20),
-                              //     ),
-                              //   ),
-                              child: Center(
-                                child: Text(
-                                  "SIGN IN",
-                                  style: GoogleFonts.urbanist(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2,
+                                
+                                child: Center(
+                                  child: Text(
+                                    "SIGN IN",
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 2,
+                                    ),
                                   ),
                                 ),
                               ),
