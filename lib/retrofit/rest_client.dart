@@ -1,5 +1,7 @@
+import 'package:baymax/models/RequestModels/auth_me_request_model.dart';
 import 'package:baymax/models/RequestModels/sign_in_request_model.dart';
 import 'package:baymax/models/RequestModels/sign_up_request_model.dart';
+import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
 import 'package:baymax/models/ResponseModels/sign_in_response_model.dart';
 import 'package:baymax/models/ResponseModels/sign_up_response_model.dart';
 import 'package:dio/dio.dart';
@@ -22,6 +24,11 @@ abstract class RestClient {
    @POST(ApiConstants.authLogin)
    Future<SignInResponseModel> signIn(
     @Body() SignInRequestModel request
+  );
+
+  @GET(ApiConstants.fetchDetails)
+   Future<AuthMeResponseModel> fetchUserDetails(
+    @Body() AuthMeRequestModel request
   );
 
   // @POST(ApiConstants.uploadFile)

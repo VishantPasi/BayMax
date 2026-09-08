@@ -56,7 +56,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.urbanist(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -68,7 +68,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
                   Text(
                     time,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.urbanist(
                       fontSize: 12,
                       color: Colors.white,
                     ),
@@ -80,9 +80,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
               Text(
                 subtitle,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.urbanist(
                   fontSize: 14,
-                  color: Colors.white,
+                  color: Colors.white70,
                 ),
               ),
 

@@ -17,8 +17,7 @@ abstract class AppEnvironment {
         break;
 
       case Environment.prod:
-        baseUrl = "http://192.168.7.14:8000";
-        // baseUrl = "http://192.168.7.9:8000";
+        baseUrl = "http://192.168.7.15:8000";
         environmentName = "PROD";
         break;
     }

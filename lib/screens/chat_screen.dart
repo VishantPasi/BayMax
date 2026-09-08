@@ -49,8 +49,8 @@ class _ChatScreenState extends State<ChatScreen> {
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Colors.white.withOpacity(0.18),
-    Colors.white.withOpacity(0.10),
+    Colors.white.withValues(alpha: 0.18),
+    Colors.white.withValues(alpha: 0.10),
   ],
 )
                     : null,

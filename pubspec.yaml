@@ -38,12 +38,13 @@ dependencies:
   google_fonts: ^8.2.1
   font_awesome_flutter: ^11.0.0
   lottie: ^3.5.1
-  flutter_launcher_icons: ^0.14.4
   animated_notch_bottom_bar: ^1.0.4
   retrofit: ^4.10.0
   dio: ^5.11.1
   retrofit_generator: ^10.2.9
-  build_runner: ^2.15.1
+  flutter_secure_storage: ^10.3.1
+  flutter_riverpod: ^3.4.3
+  
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +56,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  build_runner: ^2.15.1
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

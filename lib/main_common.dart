@@ -3,6 +3,7 @@ import 'package:baymax/screens/home_screen.dart';
 import 'package:baymax/screens/login/initial_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void mainCommon() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +13,7 @@ void mainCommon() {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(const MyApp());
+  runApp(const ProviderScope(child:  MyApp(),));
 }
 
 class MyApp extends StatelessWidget {
