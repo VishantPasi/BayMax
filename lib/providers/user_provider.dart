@@ -12,7 +12,13 @@ class UserNotifier extends AsyncNotifier<AuthMeResponseModel?>{
 
   @override
   Future<AuthMeResponseModel?> build() async {
-    return null;
+    final accessToken = await SecureStorageService.getAccessToken();
+
+    if (accessToken == null || accessToken.isEmpty) {
+      return null;
+    }
+
+    return await Userdetails().fetchUserDetails(accessToken);
   }
 
   void setUser(AuthMeResponseModel user){
