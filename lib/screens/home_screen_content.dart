@@ -3,6 +3,7 @@ import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
 import 'package:baymax/network/apiHandling/userDetails.dart';
 import 'package:baymax/providers/user_provider.dart';
 import 'package:baymax/retrofit/retrofit_service.dart';
+import 'package:baymax/screens/chat_screen.dart';
 import 'package:baymax/services/secure_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +22,7 @@ class HomeScreenContent extends ConsumerStatefulWidget {
 class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
   int maxLines = 1;
   double containerHeight = 120;
+  final TextEditingController _messageController = TextEditingController();
 
   int maxHeight() {
     if (maxLines == 1) {
@@ -32,6 +34,22 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
     } else {
       return 210;
     }
+  }
+
+  void openChat({String? prompt}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChatScreen(controller: widget.controller!, initialPrompt: prompt),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
   }
 
   Widget recentActivity(String title, String subtitle, String time) {
@@ -309,6 +327,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                       child: TextField(
                         minLines: 1,
                         maxLines: 3,
+                        controller: _messageController,
                         keyboardType: TextInputType.multiline,
                         cursorColor: Colors.white,
                         style: GoogleFonts.urbanist(
@@ -373,18 +392,33 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                               ),
                               SizedBox(width: 10),
 
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Color.fromARGB(31, 0, 0, 0),
-                                ),
-                                child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.paperPlane,
-                                    color: Colors.white,
-                                    size: 16,
+                              GestureDetector(
+                                onTap: () {
+                                  final message = _messageController.text
+                                      .trim();
+
+                                  if (message.isEmpty) {
+                                    return;
+                                  }
+
+                                  openChat(prompt: message);
+                                },
+
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(31, 0, 0, 0),
+                                  ),
+
+                                  child: Center(
+                                    child: FaIcon(
+                                      FontAwesomeIcons.paperPlane,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -416,118 +450,146 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(40, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.squarePollHorizontal,
-                            color: Colors.white,
-                            size: 23,
+                  GestureDetector(
+                    onTap: () {
+                      openChat(prompt: "Summarize the following text:\n\n");
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(40, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.squarePollHorizontal,
+                              color: Colors.white,
+                              size: 23,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Summarize \nText",
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 12,
-                          color: Colors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Summarize \nText",
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(40, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.solidLightbulb,
-                            color: Colors.white,
-                            size: 23,
+                  GestureDetector(
+                    onTap: () {
+                      openChat(
+                        prompt:
+                            "Explain the following concept in simple terms:\n\n",
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(40, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.solidLightbulb,
+                              color: Colors.white,
+                              size: 23,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Explain \nConcepts",
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 12,
-                          color: Colors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Explain \nConcepts",
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(40, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.pen,
-                            color: Colors.white,
-                            size: 20,
+                  GestureDetector(
+                    onTap: () {
+                      openChat(
+                        prompt: "Help me write the following content:\n\n",
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(40, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.pen,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Write \nContent",
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 12,
-                          color: Colors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Write \nContent",
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
 
-                  Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(40, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.chartSimple,
-                            color: Colors.white,
-                            size: 20,
+                  GestureDetector(
+                    onTap: () {
+                      openChat(
+                        prompt:
+                            "Analyze the following data and explain the key insights:\n\n",
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(40, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.chartSimple,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Analyze \nData",
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 12,
-                          color: Colors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Analyze \nData",
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
