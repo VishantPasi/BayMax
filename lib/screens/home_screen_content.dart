@@ -1,5 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
+import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
+import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:baymax/network/apiHandling/userDetails.dart';
 import 'package:baymax/providers/user_provider.dart';
 import 'package:baymax/retrofit/retrofit_service.dart';
@@ -23,6 +25,12 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
   int maxLines = 1;
   double containerHeight = 120;
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _messageFocusNode = FocusNode();
+
+  final ChatService _chatService = ChatService();
+
+  List<GetChatsResponseModel> _recentChats = [];
+  bool _isLoadingRecentChats = true;
 
   int maxHeight() {
     if (maxLines == 1) {
@@ -36,23 +44,82 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
     }
   }
 
-  void openChat({String? prompt}) {
+  void openChat({String? prompt, bool? isQuickAction}) {
+    _messageFocusNode.unfocus();
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            ChatScreen(controller: widget.controller!, initialPrompt: prompt),
+            ChatScreen(initialPrompt: prompt, isQuickAction: isQuickAction),
       ),
     );
+
+    if (mounted) {
+      _messageFocusNode.unfocus();
+      _messageController.clear();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadRecentChats();
   }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _messageFocusNode.dispose();
     super.dispose();
   }
 
-  Widget recentActivity(String title, String subtitle, String time) {
+  Future<void> _loadRecentChats() async {
+    try {
+      final chats = await _chatService.getChats();
+
+      if (!mounted) return;
+
+      setState(() {
+        _recentChats = chats.take(3).toList();
+        _isLoadingRecentChats = false;
+      });
+    } catch (e) {
+      debugPrint('Failed to load recent chats: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingRecentChats = false;
+      });
+    }
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime.toLocal());
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    }
+
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} min ago';
+    }
+
+    if (difference.inHours < 24) {
+      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+    }
+
+    if (difference.inDays < 7) {
+      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+    }
+
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+  }
+
+  Widget recentActivity(String title, String time) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,7 +142,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               // Line
               Container(
                 width: 2,
-                height: 65,
+                height: 46,
                 color: Color.fromARGB(255, 99, 99, 99),
               ),
             ],
@@ -95,13 +162,14 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                   Expanded(
                     child: Text(
                       title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      
                       style: GoogleFonts.urbanist(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
 
@@ -117,17 +185,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                 ],
               ),
 
-              SizedBox(height: 3),
-
-              Text(
-                subtitle,
-                style: GoogleFonts.urbanist(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
-              ),
-
-              SizedBox(height: 15),
+              SizedBox(height: 7),
             ],
           ),
         ),
@@ -328,6 +386,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                         minLines: 1,
                         maxLines: 3,
                         controller: _messageController,
+                        focusNode: _messageFocusNode,
                         keyboardType: TextInputType.multiline,
                         cursorColor: Colors.white,
                         style: GoogleFonts.urbanist(
@@ -401,7 +460,10 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                                     return;
                                   }
 
-                                  openChat(prompt: message);
+                                  openChat(
+                                    prompt: message,
+                                    isQuickAction: false,
+                                  );
                                 },
 
                                 child: Container(
@@ -452,7 +514,10 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      openChat(prompt: "Summarize the following text:\n\n");
+                      openChat(
+                        prompt: "Summarize the following text:\n\n",
+                        isQuickAction: true,
+                      );
                     },
                     child: Column(
                       children: [
@@ -488,6 +553,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                       openChat(
                         prompt:
                             "Explain the following concept in simple terms:\n\n",
+                        isQuickAction: true,
                       );
                     },
                     child: Column(
@@ -523,6 +589,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                     onTap: () {
                       openChat(
                         prompt: "Help me write the following content:\n\n",
+                        isQuickAction: true,
                       );
                     },
                     child: Column(
@@ -560,6 +627,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                       openChat(
                         prompt:
                             "Analyze the following data and explain the key insights:\n\n",
+                        isQuickAction: true,
                       );
                     },
                     child: Column(
@@ -626,29 +694,49 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  recentActivity(
-                    "Summarized a text",
-                    "You created a summary",
-                    "2 hours ago",
-                  ),
-                  SizedBox(height: 10),
-                  recentActivity(
-                    "Explained a concept",
-                    "You provided an explanation",
-                    "5 hours ago",
-                  ),
-                  SizedBox(height: 10),
-                  recentActivity(
-                    "Wrote an article",
-                    "You published an article",
-                    "1 day ago",
-                  ),
-                  SizedBox(height: 10),
-                  recentActivity(
-                    "Analyzed data",
-                    "You analyzed data",
-                    "2 days ago",
-                  ),
+                  _isLoadingRecentChats
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromARGB(255, 255, 198, 75),
+                          ),
+                        )
+                      : _recentChats.isEmpty
+                      ? Text(
+                          "No recent activity",
+                          style: GoogleFonts.urbanist(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            for (int i = 0; i < _recentChats.length; i++) ...[
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ChatScreen(
+                                        chatId: _recentChats[i].id,
+                                      ),
+                                    ),
+                                  ).then((_) {
+                                    _loadRecentChats();
+                                  });
+                                },
+                                child: recentActivity(
+                                  _recentChats[i].title ?? "Untitled Chat",
+                                  _formatTime(
+                                    DateTime.parse(_recentChats[i].updatedAt!),
+                                  ),
+                                ),
+                              ),
+
+                              if (i != _recentChats.length - 1)
+                                const SizedBox(height: 10),
+                            ],
+                          ],
+                        ),
                 ],
               ),
             ),

@@ -18,7 +18,7 @@ class UserNotifier extends AsyncNotifier<AuthMeResponseModel?>{
       return null;
     }
 
-    return await Userdetails().fetchUserDetails(accessToken);
+    return await UserDetails().fetchUserDetails(accessToken);
   }
 
   void setUser(AuthMeResponseModel user){
@@ -33,7 +33,7 @@ class UserNotifier extends AsyncNotifier<AuthMeResponseModel?>{
         return null;
       }
 
-      return await Userdetails().fetchUserDetails(accessToken);
+      return await UserDetails().fetchUserDetails(accessToken);
     });
   }
 

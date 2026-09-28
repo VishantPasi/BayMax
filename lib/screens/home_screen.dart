@@ -31,11 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> bottomBarPages = [
-      HomeScreenContent(controller: _controller),
-      ChatScreen(controller: _controller),
-      ChatHistoryScreen(controller: _controller),
-    ];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -126,11 +121,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 ListTile(
+                  leading: FaIcon(FontAwesomeIcons.clockRotateLeft, color: Colors.white),
+                  title: Text(
+                    "Chat History",
+                    style: GoogleFonts.urbanist(
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    // Handle Profile tap
+                  },
+                ),
+                ListTile(
                   leading: FaIcon(FontAwesomeIcons.gear, color: Colors.white),
                   title: Text(
                     "Settings",
                     style: GoogleFonts.urbanist(
-                      fontSize: 16,
+                      fontSize: 15,
                       color: Colors.white,
                     ),
                   ),
@@ -157,14 +165,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           FaIcon(
                             FontAwesomeIcons.rightFromBracket,
-                            color: Colors.white,
+                            color: Colors.red,
                           ),
                           SizedBox(width: 10),
                           Text(
                             "Logout",
                             style: GoogleFonts.urbanist(
                               fontSize: 16,
-                              color: Colors.white,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ],
@@ -179,82 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        body: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: List.generate(
-            bottomBarPages.length,
-            (index) => bottomBarPages[index],
-          ),
-        ),
-        extendBody: true,
-        bottomNavigationBar: (bottomBarPages.length <= maxCount)
-            ? Container(
-                color: Colors.transparent,
-                child: AnimatedNotchBottomBar(
-                  notchBottomBarController: _controller,
-
-                  bottomBarHeight: 62,
-                  circleMargin: 3,
-                  kIconSize: 22,
-
-                  showLabel: true,
-                  showShadow: false,
-
-                  color: Color.fromRGBO(40, 40, 40, 1),
-                  notchColor: Color.fromARGB(255, 255, 198, 75),
-
-                  itemLabelStyle: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-
-                  bottomBarItems: const [
-                    BottomBarItem(
-                      inActiveItem: FaIcon(
-                        FontAwesomeIcons.house,
-                        color: Colors.white,
-                      ),
-                      activeItem: FaIcon(
-                        FontAwesomeIcons.house,
-                        color: Colors.black,
-                      ),
-                      itemLabel: 'Home',
-                    ),
-
-                    BottomBarItem(
-                      inActiveItem: FaIcon(
-                        FontAwesomeIcons.wandMagicSparkles,
-                        color: Colors.white,
-                      ),
-                      activeItem: FaIcon(
-                        FontAwesomeIcons.wandMagicSparkles,
-                        color: Colors.black,
-                      ),
-                      itemLabel: 'Ask AI',
-                    ),
-
-                    BottomBarItem(
-                      inActiveItem: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
-                        color: Colors.white,
-                      ),
-                      activeItem: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
-                        color: Colors.black,
-                      ),
-                      itemLabel: 'History',
-                    ),
-                  ],
-
-                  onTap: (index) {
-                    _pageController.jumpToPage(index);
-                  },
-                  kBottomRadius: 28,
-                ),
-              )
-            : null,
+        body: HomeScreenContent(),
+      
       ),
     );
   }

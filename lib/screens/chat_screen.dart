@@ -1,19 +1,20 @@
-import 'package:animated_notch_bottom_bar/src/notch_bottom_bar_controller.dart';
-import 'package:dio/src/dio.dart';
+import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:baymax/retrofit/retrofit_service.dart';
 import 'package:baymax/services/ai_service.dart';
 import 'package:baymax/services/secure_storage_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final String? initialPrompt;
+  final bool? isQuickAction;
+  final int? chatId;
   const ChatScreen({
     super.key,
-    required NotchBottomBarController controller,
     this.initialPrompt,
+    this.isQuickAction,
+    this.chatId,
   });
 
   @override
@@ -22,14 +23,13 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-
   final ScrollController _scrollController = ScrollController();
-
+  final FocusNode _messageFocusNode = FocusNode();
   int maxLines = 1;
-
   double containerHeight = 120;
-
   bool _isGenerating = false;
+  int? _currentChatId;
+  String? _chatTitle;
 
   final List<Map<String, dynamic>> _messages = [];
 
@@ -49,18 +49,65 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    if (widget.initialPrompt != null && widget.initialPrompt!.isNotEmpty) {
-      _messageController.text = widget.initialPrompt!;
-    }
+    _currentChatId = widget.chatId;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      if (widget.chatId != null) {
+        _loadChat();
+      } else if (widget.initialPrompt != null &&
+          widget.initialPrompt!.trim().isNotEmpty) {
+        _messageController.text = widget.initialPrompt!;
+
+        if (widget.isQuickAction != true) {
+          _messageFocusNode.unfocus();
+          sendMessage();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _messageController.dispose();
-
     _scrollController.dispose();
+    _messageFocusNode.dispose();
 
     super.dispose();
+  }
+
+  Future<void> _loadChat() async {
+    try {
+      final accessToken = await SecureStorageService.getAccessToken();
+
+      final dio = RetrofitService.getDio(token: accessToken);
+
+      final response = await dio.get('/chats/${widget.chatId}');
+
+      final data = response.data;
+
+      _chatTitle = data['title'];
+
+      final List<dynamic> messages = data['messages'] ?? [];
+
+      if (!mounted) return;
+
+      setState(() {
+        _messages.clear();
+
+        for (final message in messages) {
+          _messages.add({
+            'message': message['content'],
+            'isUser': message['role'] == 'user',
+          });
+        }
+      });
+
+      _scrollToBottom();
+    } catch (e) {
+      debugPrint('Failed to load chat: $e');
+    }
   }
 
   Widget buildChatBubble(String message, bool isUser) {
@@ -129,13 +176,12 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
+    _messageFocusNode.unfocus();
     _messageController.clear();
 
     setState(() {
-      // Add user message
       _messages.add({'message': message, 'isUser': true});
 
-      // Add empty AI message
       _messages.add({'message': '', 'isUser': false});
 
       _isGenerating = true;
@@ -145,23 +191,32 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final accessToken = await SecureStorageService.getAccessToken();
+      ChatService chatService = new ChatService();
+  
 
-      final dio = RetrofitService.getDio(token: accessToken);
 
-      final aiService = AIService(dio);
+      
 
-      await for (final chunk in aiService.streamChat(message)) {
-        if (!mounted) {
-          return;
-        }
+      if (_currentChatId == null) {
+        final response = await chatService.createChat(message.length > 50
+                ? '${message.substring(0, 50)}...'
+                : message);
 
-        setState(() {
-          // Last message is the AI message
-          _messages.last['message'] += chunk;
-        });
+      
+
+        _currentChatId = response.id;
+      }
+
+      
+
+      chatService.saveMessage(_currentChatId!, message);
+
+
+      
+        
 
         _scrollToBottom();
-      }
+      
     } catch (e) {
       if (!mounted) {
         return;
@@ -200,163 +255,144 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(15, 15, 15, 1),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
 
-        crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 20, top: 20.0),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 20, top: 20.0),
 
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-              children: [
-                Text(
-                  "New Chat",
+                children: [
+                  Text(
+                    _chatTitle ?? "New Chat",
 
-                  style: GoogleFonts.urbanist(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    style: GoogleFonts.urbanist(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
 
-                const FaIcon(
-                  FontAwesomeIcons.ellipsisVertical,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ],
-            ),
-          ),
-
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-
-              padding: const EdgeInsets.only(bottom: 20),
-
-              itemCount: _messages.length,
-
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-
-                return buildChatBubble(message['message'], message['isUser']);
-              },
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 15.0,
-              right: 15.0,
-              bottom: 15.0,
+                  const FaIcon(
+                    FontAwesomeIcons.ellipsisVertical,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ],
+              ),
             ),
 
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
 
-              width: double.infinity,
+                padding: const EdgeInsets.only(bottom: 20),
 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                itemCount: _messages.length,
 
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
 
-                  end: Alignment.bottomRight,
+                  return buildChatBubble(message['message'], message['isUser']);
+                },
+              ),
+            ),
 
-                  colors: [
-                    const Color.fromARGB(255, 73, 73, 73),
-
-                    const Color.fromARGB(115, 255, 198, 75),
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15.0,
+                right: 15.0,
+                bottom: 15.0,
               ),
 
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 5,
-                    ),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
 
-                    child: TextField(
-                      controller: _messageController,
+                width: double.infinity,
 
-                      minLines: 1,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
 
-                      maxLines: 10,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
 
-                      keyboardType: TextInputType.multiline,
+                    end: Alignment.bottomRight,
 
-                      cursorColor: Colors.white,
+                    colors: [
+                      const Color.fromARGB(255, 73, 73, 73),
 
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-
-                      onChanged: (value) {
-                        setState(() {
-                          maxLines = value.split('\n').length;
-
-                          containerHeight = maxHeight().toDouble();
-                        });
-                      },
-
-                      onSubmitted: (_) {
-                        if (!_isGenerating) {
-                          sendMessage();
-                        }
-                      },
-
-                      decoration: const InputDecoration(
-                        hintText: "Ask me anything...",
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                      const Color.fromARGB(115, 255, 198, 75),
+                    ],
                   ),
+                ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 5,
+                      ),
 
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      child: TextField(
+                        controller: _messageController,
+                        focusNode: _messageFocusNode,
 
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
+                        minLines: 1,
 
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
+                        maxLines: 10,
 
-                                color: const Color.fromARGB(31, 0, 0, 0),
-                              ),
+                        keyboardType: TextInputType.multiline,
 
-                              child: const Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.microphone,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                              ),
-                            ),
+                        cursorColor: Colors.white,
 
-                            const SizedBox(width: 10),
+                        style: GoogleFonts.urbanist(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
 
-                            GestureDetector(
-                              onTap: _isGenerating ? null : sendMessage,
+                        onChanged: (value) {
+                          setState(() {
+                            maxLines = value.split('\n').length;
 
-                              child: Container(
+                            containerHeight = maxHeight().toDouble();
+                          });
+                        },
+
+                        onSubmitted: (_) {
+                          if (!_isGenerating) {
+                            sendMessage();
+                          }
+                        },
+
+                        decoration: const InputDecoration(
+                          hintText: "Ask me anything...",
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+
+                        children: [
+                          Row(
+                            children: [
+                              Container(
                                 height: 40,
                                 width: 40,
 
@@ -366,37 +402,62 @@ class _ChatScreenState extends State<ChatScreen> {
                                   color: const Color.fromARGB(31, 0, 0, 0),
                                 ),
 
-                                child: Center(
-                                  child: _isGenerating
-                                      ? const SizedBox(
-                                          height: 18,
-                                          width: 18,
-
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : const FaIcon(
-                                          FontAwesomeIcons.paperPlane,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
+                                child: const Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.microphone,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            const SizedBox(width: 20),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 10),
+
+                              GestureDetector(
+                                onTap: _isGenerating ? null : sendMessage,
+
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+
+                                    color: const Color.fromARGB(31, 0, 0, 0),
+                                  ),
+
+                                  child: Center(
+                                    child: _isGenerating
+                                        ? const SizedBox(
+                                            height: 18,
+                                            width: 18,
+
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : const FaIcon(
+                                            FontAwesomeIcons.paperPlane,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(width: 20),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
 import 'package:baymax/retrofit/retrofit_service.dart';
 import 'package:baymax/services/secure_storage_service.dart';
 
-class Userdetails {
+class UserDetails {
   Future<AuthMeResponseModel> fetchUserDetails(String accessToken) async {
     try {
       final response = await RetrofitService.getClient(
