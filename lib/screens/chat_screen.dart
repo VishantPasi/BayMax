@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:baymax/retrofit/retrofit_service.dart';
-import 'package:baymax/services/secure_storage_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final String? initialPrompt;
   final bool? isQuickAction;
   final int? chatId;
+  final String? chatTitle;
   const ChatScreen({
     super.key,
     this.initialPrompt,
     this.isQuickAction,
-    this.chatId,
+    required this.chatId,
+    this.chatTitle,
   });
 
   @override
@@ -31,6 +31,16 @@ class _ChatScreenState extends State<ChatScreen> {
   int? _currentChatId;
   String? _chatTitle;
   bool _isUserAtBottom = true;
+
+  int _currentPage = 1;
+  static const int _pageSize = 5;
+
+  bool _isLoadingChat = false;
+  bool _isLoadingOlder = false;
+  bool _hasMoreMessages = true;
+  final ChatService _chatService = ChatService();
+
+  bool _shouldAutoScroll = true;
 
   final List<Map<String, dynamic>> _messages = [];
 
@@ -50,9 +60,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    
-
     _currentChatId = widget.chatId;
+    _chatTitle = widget.chatTitle;
 
     _scrollController.addListener(_handleScroll);
 
@@ -83,56 +92,159 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  Future<void> _loadChat() async {
+  Future<void> _loadOlderMessages() async {
+    if (_isLoadingOlder || !_hasMoreMessages) {
+      return;
+    }
+
+    final chatId = _currentChatId;
+
+    if (chatId == null) {
+      return;
+    }
+
+    _isLoadingOlder = true;
+
     try {
-      final accessToken = await SecureStorageService.getAccessToken();
+      final nextPage = _currentPage + 1;
 
-      final dio = RetrofitService.getDio(token: accessToken);
+      debugPrint('Loading older messages: page=$nextPage');
 
-      final response = await dio.get('/chats/${widget.chatId}');
-
-      final data = response.data;
-
-      _chatTitle = data['title'];
-
-      final List<dynamic> messages = data['messages'] ?? [];
+      final response = await _chatService.getChat(chatId, nextPage, _pageSize);
 
       if (!mounted) return;
+
+      final messages = response.messages ?? [];
+
+      if (messages.isEmpty) {
+        setState(() {
+          _hasMoreMessages = false;
+        });
+
+        return;
+      }
+
+      setState(() {
+        // API:
+        //
+        // 11
+        // 12
+        // 13
+        // 14
+        // 15
+        //
+        // Reverse because our ListView is reversed:
+        //
+        // 15
+        // 14
+        // 13
+        // 12
+        // 11
+
+        for (final message in messages.reversed) {
+          _messages.add({
+            'message': message.content ?? '',
+            'isUser': message.role == 'user',
+          });
+        }
+
+        _currentPage = nextPage;
+
+        _hasMoreMessages = messages.length == _pageSize;
+      });
+    } catch (e, stackTrace) {
+      debugPrint('Failed to load older messages: $e');
+      debugPrint('$stackTrace');
+    } finally {
+      _isLoadingOlder = false;
+    }
+  }
+
+  Future<void> _loadChat() async {
+    final chatId = _currentChatId;
+
+    if (chatId == null || _isLoadingChat) {
+      return;
+    }
+
+    setState(() {
+      _isLoadingChat = true;
+    });
+
+    try {
+      final response = await _chatService.getChat(chatId, 1, _pageSize);
+
+      if (!mounted) return;
+
+      final messages = response.messages ?? [];
 
       setState(() {
         _messages.clear();
 
-        for (final message in messages) {
+        // API gives oldest -> newest.
+        // Flutter stores newest -> oldest because ListView is reversed.
+        for (final message in messages.reversed) {
           _messages.add({
-            'message': message['content'],
-            'isUser': message['role'] == 'user',
+            'message': message.content ?? '',
+            'isUser': message.role == 'user',
           });
         }
-      });
 
-      _scrollToBottom();
-    } catch (e) {
+        _currentPage = 1;
+
+        _hasMoreMessages = messages.length == _pageSize;
+      });
+    } catch (e, stackTrace) {
       debugPrint('Failed to load chat: $e');
+      debugPrint('$stackTrace');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingChat = false;
+        });
+      }
     }
   }
 
   void _handleScroll() {
-    if (!_scrollController.hasClients) {
-      return;
-    }
+  if (!_scrollController.hasClients) {
+    return;
+  }
 
-    const double threshold = 30.0;
+  final position = _scrollController.position;
 
-    final position = _scrollController.position;
+  const threshold = 100.0;
 
-    final isAtBottom = position.maxScrollExtent - position.pixels <= threshold;
+  // reverse:true
+  //
+  // pixels == 0
+  // -> newest messages / bottom
+  //
+  // maxScrollExtent
+  // -> oldest messages / top
 
-    if (_isUserAtBottom != isAtBottom) {
-      setState(() {
-        _isUserAtBottom = isAtBottom;
-      });
+  final isAtBottom = position.pixels <= threshold;
+
+  if (_isUserAtBottom != isAtBottom) {
+    setState(() {
+      _isUserAtBottom = isAtBottom;
+    });
+
+    // If user manually scrolls away from bottom,
+    // STOP automatic streaming scroll.
+    if (!isAtBottom) {
+      _shouldAutoScroll = false;
     }
   }
+
+  // Load older messages when user reaches the TOP.
+  if (position.pixels >=
+          position.maxScrollExtent - threshold &&
+      !_isLoadingOlder &&
+      _hasMoreMessages) {
+    _loadOlderMessages();
+  }
+}
 
   Widget buildChatBubble(String message, bool isUser) {
     return SizedBox(
@@ -182,13 +294,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   strong: GoogleFonts.urbanist(
                     color: const Color.fromARGB(255, 255, 198, 75),
-                    
+
                     fontSize: 14,
                   ),
 
                   listBullet: GoogleFonts.urbanist(
                     color: const Color.fromARGB(255, 255, 198, 75),
-                    
+
                     fontSize: 14,
                   ),
 
@@ -203,97 +315,117 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> sendMessage() async {
-    if (_isGenerating) {
-      return;
-    }
+  if (_isGenerating) {
+    return;
+  }
 
-    final message = _messageController.text.trim();
+  final message = _messageController.text.trim();
 
-    if (message.isEmpty) {
-      return;
-    }
+  if (message.isEmpty) {
+    return;
+  }
 
-    _messageFocusNode.unfocus();
-    _messageController.clear();
+  _messageFocusNode.unfocus();
+  _messageController.clear();
 
-    setState(() {
-      _messages.add({'message': message, 'isUser': true});
+  // Remember whether the user was at the bottom
+  // BEFORE adding the new message.
+  _shouldAutoScroll = _isUserAtBottom;
 
-      _messages.add({'message': '', 'isUser': false});
-
-      _isGenerating = true;
+  setState(() {
+    _messages.insert(0, {
+      'message': message,
+      'isUser': true,
     });
 
-    _scrollToBottom();
+    _messages.insert(0, {
+      'message': '',
+      'isUser': false,
+    });
 
-    try {
-      final chatService = ChatService();
+    _isGenerating = true;
+  });
 
-      // Create a new chat if necessary.
-      if (_currentChatId == null) {
-        final response = await chatService.createChat(
-          message.length > 50 ? '${message.substring(0, 50)}...' : message,
-        );
+  _scrollToBottom();
 
-        _currentChatId = response.id;
-      }
+  try {
+    final chatService = ChatService();
 
-      await chatService.sendMessageStream(
-        chatId: _currentChatId!,
-        message: message,
-        onChunk: (content) {
-          if (!mounted) {
-            return;
-          }
-
-          setState(() {
-            _messages.last['message'] = '${_messages.last['message']}$content';
-          });
-
-          _scrollToBottom();
-        },
+    if (_currentChatId == null) {
+      final response = await chatService.createChat(
+        message.length > 50
+            ? '${message.substring(0, 50)}...'
+            : message,
       );
-    } catch (e) {
-      if (!mounted) {
-        return;
-      }
 
-      debugPrint('AI request failed: $e');
+      _currentChatId = response.id;
+    }
 
-      setState(() {
-        _messages.last['message'] =
-            'Sorry, something went wrong while generating the response.';
-      });
-    } finally {
-      if (!mounted) {
-        return;
-      }
+    await chatService.sendMessageStream(
+      chatId: _currentChatId!,
+      message: message,
+      onChunk: (content) {
+        if (!mounted) {
+          return;
+        }
 
-      setState(() {
-        _isGenerating = false;
-      });
+        setState(() {
+          _messages[0]['message'] =
+              '${_messages[0]['message']}$content';
+        });
 
+        if (_shouldAutoScroll) {
+          _scrollToBottom();
+        }
+      },
+    );
+  } catch (e) {
+    if (!mounted) {
+      return;
+    }
+
+    debugPrint('AI request failed: $e');
+
+    setState(() {
+      _messages[0]['message'] =
+          'Sorry, something went wrong while generating the response.';
+    });
+  } finally {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isGenerating = false;
+    });
+
+    if (_shouldAutoScroll) {
       _scrollToBottom();
     }
   }
+}
 
   void _scrollToBottom() {
-    if (!_isUserAtBottom) {
+  if (!_shouldAutoScroll) {
+    return;
+  }
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!mounted) {
       return;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients || !_isUserAtBottom) {
-        return;
-      }
+    if (!_scrollController.hasClients) {
+      return;
+    }
 
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-      );
-    });
-  }
+    if (!_shouldAutoScroll) {
+      return;
+    }
+
+    _scrollController.jumpTo(0);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -337,15 +469,16 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-
+                reverse: true,
                 padding: const EdgeInsets.only(bottom: 20),
-
                 itemCount: _messages.length,
-
                 itemBuilder: (context, index) {
                   final message = _messages[index];
 
-                  return buildChatBubble(message['message'], message['isUser']);
+                  return buildChatBubble(
+                    message['message'] as String,
+                    message['isUser'] as bool,
+                  );
                 },
               ),
             ),

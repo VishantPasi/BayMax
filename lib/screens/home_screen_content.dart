@@ -49,7 +49,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            ChatScreen(initialPrompt: prompt, isQuickAction: isQuickAction),
+            ChatScreen(chatId: null, initialPrompt: prompt, isQuickAction: isQuickAction),
       ),
     );
 
@@ -727,6 +727,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                                     MaterialPageRoute(
                                       builder: (_) => ChatScreen(
                                         chatId: _recentChats![i].id,
+                                        chatTitle: _recentChats![i].title,
                                       ),
                                     ),
                                   ).then((_) {

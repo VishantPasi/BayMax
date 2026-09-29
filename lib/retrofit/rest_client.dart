@@ -43,7 +43,7 @@ abstract class RestClient {
     @Query('page_size') int pageSize,
   );
 
-  @POST(ApiConstants.getChatsWithId)
+  @GET(ApiConstants.getChatsWithId)
   Future<GetChatsWithIdResponseModel> getChatsWithId(
     @Path('chatId') int chatId,
     @Query('page') int page,
