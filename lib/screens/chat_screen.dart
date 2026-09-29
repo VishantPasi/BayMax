@@ -178,19 +178,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   p: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 14,
                   ),
 
                   strong: GoogleFonts.urbanist(
                     color: const Color.fromARGB(255, 255, 198, 75),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
+                    
+                    fontSize: 14,
                   ),
 
                   listBullet: GoogleFonts.urbanist(
                     color: const Color.fromARGB(255, 255, 198, 75),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
+                    
+                    fontSize: 14,
                   ),
 
                   listIndent: 24,

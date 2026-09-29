@@ -31,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Color.fromRGBO(15, 15, 15, 1),
@@ -52,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     gradient: const LinearGradient(
                       colors: [
                         Color.fromARGB(255, 254, 191, 52),
-                                          Color.fromARGB(255, 183, 114, 2),
+                        Color.fromARGB(255, 183, 114, 2),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -81,7 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: GoogleFonts.urbanist(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 255, 255, 255),
+                                  color: const Color.fromARGB(
+                                    255,
+                                    255,
+                                    255,
+                                    255,
+                                  ),
                                 ),
                               ),
                               Text(
@@ -121,7 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 ListTile(
-                  leading: FaIcon(FontAwesomeIcons.clockRotateLeft, color: Colors.white),
+                  leading: FaIcon(
+                    FontAwesomeIcons.clockRotateLeft,
+                    color: Colors.white,
+                  ),
                   title: Text(
                     "Chat History",
                     style: GoogleFonts.urbanist(
@@ -129,9 +136,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.white,
                     ),
                   ),
-                  onTap: () {
-                    // Handle Profile tap
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatHistoryScreen(),
+                    ),
+                  ),
                 ),
                 ListTile(
                   leading: FaIcon(FontAwesomeIcons.gear, color: Colors.white),
@@ -147,9 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 Spacer(),
-                Image.asset(  
+                Image.asset(
                   "assets/images/drawer_image.png",
-                  width: double.infinity,  ),
+                  width: double.infinity,
+                ),
                 Text(
                   "Version 1.0.0",
                   style: GoogleFonts.urbanist(
@@ -173,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: GoogleFonts.urbanist(
                               fontSize: 16,
                               color: Colors.red,
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -189,9 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: HomeScreenContent(),
-      
       ),
     );
   }
 }
-
