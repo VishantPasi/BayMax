@@ -1,5 +1,4 @@
 import 'package:baymax/env_config.dart';
-import 'package:baymax/screens/home_screen.dart';
 import 'package:baymax/screens/login/initial_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

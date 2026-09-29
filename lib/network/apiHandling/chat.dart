@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:baymax/models/RequestModels/create_chat_request_model.dart';
-import 'package:baymax/models/RequestModels/send_message_request_model.dart';
 import 'package:baymax/models/ResponseModels/create_chat_response_model.dart';
 import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
 import 'package:baymax/models/ResponseModels/get_chats_with_id_response_model.dart';
@@ -22,21 +21,21 @@ class ChatService {
     return response;
   }
 
-  Future<List<GetChatsResponseModel>> getChats() async {
+  Future<GetChatsResponseModel> getChats(int page, int pageSize) async {
     final token = await SecureStorageService.getAccessToken();
 
     final response =
-        await RetrofitService.getClient(token: token).getChats();
+        await RetrofitService.getClient(token: token).getChats(page, pageSize);
 
     return response;
   }
 
-  Future<GetChatsWithIdResponseModel> getChat(int chatId) async {
+  Future<GetChatsWithIdResponseModel> getChat(int chatId, int page, int pageSize) async {
     final token = await SecureStorageService.getAccessToken();
 
     final response = await RetrofitService.getClient(
       token: token,
-    ).getChatsWithId(chatId);
+    ).getChatsWithId(chatId, page, pageSize);
 
     return response;
   }

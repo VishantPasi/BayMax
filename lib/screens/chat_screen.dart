@@ -4,7 +4,6 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:baymax/retrofit/retrofit_service.dart';
-import 'package:baymax/services/ai_service.dart';
 import 'package:baymax/services/secure_storage_service.dart';
 
 class ChatScreen extends StatefulWidget {

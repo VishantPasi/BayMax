@@ -1,12 +1,10 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
-import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
+import 'package:baymax/models/ResponseModels/get_chats_response_model.dart' as get_chats;
 import 'package:baymax/network/apiHandling/chat.dart';
-import 'package:baymax/network/apiHandling/userDetails.dart';
 import 'package:baymax/providers/user_provider.dart';
-import 'package:baymax/retrofit/retrofit_service.dart';
+import 'package:baymax/screens/chat_history_screen.dart';
 import 'package:baymax/screens/chat_screen.dart';
-import 'package:baymax/services/secure_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,7 +27,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
 
   final ChatService _chatService = ChatService();
 
-  List<GetChatsResponseModel> _recentChats = [];
+  List<get_chats.Items>? _recentChats = [];
   bool _isLoadingRecentChats = true;
 
   int maxHeight() {
@@ -77,12 +75,12 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
 
   Future<void> _loadRecentChats() async {
     try {
-      final chats = await _chatService.getChats();
+      final chats = await _chatService.getChats(1,20);
 
       if (!mounted) return;
 
       setState(() {
-        _recentChats = chats.take(3).toList();
+        _recentChats = chats.items!.take(3).toList();
         _isLoadingRecentChats = false;
       });
     } catch (e) {
@@ -119,7 +117,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
 
-  Widget recentActivity(String title, String time) {
+  Widget recentActivity(String title, String time, bool isLast) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -140,11 +138,12 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               ),
 
               // Line
-              Container(
-                width: 2,
-                height: 46,
-                color: Color.fromARGB(255, 99, 99, 99),
-              ),
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 46,
+                  color: const Color.fromARGB(255, 99, 99, 99),
+                ),
             ],
           ),
         ),
@@ -163,11 +162,12 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                     child: Text(
                       title,
                       maxLines: 2,
-                      
+
                       style: GoogleFonts.urbanist(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.none,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -180,6 +180,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                     style: GoogleFonts.urbanist(
                       fontSize: 12,
                       color: Colors.white,
+                      decoration: TextDecoration.none,
                     ),
                   ),
                 ],
@@ -677,12 +678,20 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                     ),
                   ),
 
-                  Text(
-                    "View All",
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 16,
-                      color: Color.fromARGB(255, 255, 198, 75),
-                      fontWeight: FontWeight.w500,
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatHistoryScreen(),
+                      ),
+                    ),
+                    child: Text(
+                      "View All",
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 255, 198, 75),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -700,7 +709,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                             color: Color.fromARGB(255, 255, 198, 75),
                           ),
                         )
-                      : _recentChats.isEmpty
+                      : _recentChats!.isEmpty
                       ? Text(
                           "No recent activity",
                           style: GoogleFonts.urbanist(
@@ -710,14 +719,14 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                         )
                       : Column(
                           children: [
-                            for (int i = 0; i < _recentChats.length; i++) ...[
+                            for (int i = 0; i < _recentChats!.length; i++) ...[
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => ChatScreen(
-                                        chatId: _recentChats[i].id,
+                                        chatId: _recentChats![i].id,
                                       ),
                                     ),
                                   ).then((_) {
@@ -725,14 +734,15 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                                   });
                                 },
                                 child: recentActivity(
-                                  _recentChats[i].title ?? "Untitled Chat",
+                                  _recentChats![i].title ?? "Untitled Chat",
                                   _formatTime(
-                                    DateTime.parse(_recentChats[i].updatedAt!),
+                                    DateTime.parse(_recentChats![i].updatedAt!),
                                   ),
+                                  i == _recentChats!.length - 1,
                                 ),
                               ),
 
-                              if (i != _recentChats.length - 1)
+                              if (i != _recentChats!.length - 1)
                                 const SizedBox(height: 10),
                             ],
                           ],

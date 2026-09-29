@@ -17,47 +17,44 @@ import 'package:retrofit/retrofit.dart';
 
 part 'rest_client.g.dart';
 
-
 @RestApi()
 abstract class RestClient {
   factory RestClient(Dio dio, {String baseUrl}) = _RestClient;
 
-   @POST(ApiConstants.authRegister)
-   Future<SignUpResponseModel> signUp(
-    @Body() SignUpRequestModel request
-  );
+  @POST(ApiConstants.authRegister)
+  Future<SignUpResponseModel> signUp(@Body() SignUpRequestModel request);
 
-   @POST(ApiConstants.authLogin)
-   Future<SignInResponseModel> signIn(
-    @Body() SignInRequestModel request
-  );
+  @POST(ApiConstants.authLogin)
+  Future<SignInResponseModel> signIn(@Body() SignInRequestModel request);
 
   @GET(ApiConstants.fetchDetails)
-   Future<AuthMeResponseModel> fetchUserDetails(
-    @Body() AuthMeRequestModel request
+  Future<AuthMeResponseModel> fetchUserDetails(
+    @Body() AuthMeRequestModel request,
   );
 
   @POST(ApiConstants.createChat)
-   Future<CreateChatResponseModel> createChat(
-    @Body() CreateChatRequestModel request
+  Future<CreateChatResponseModel> createChat(
+    @Body() CreateChatRequestModel request,
   );
 
   @GET(ApiConstants.getChats)
-   Future<List<GetChatsResponseModel>> getChats();
+  Future<GetChatsResponseModel> getChats(
+    @Query('page') int page,
+    @Query('page_size') int pageSize,
+  );
 
   @POST(ApiConstants.getChatsWithId)
-   Future<GetChatsWithIdResponseModel> getChatsWithId(
-    @Path('chatId') int chatId
+  Future<GetChatsWithIdResponseModel> getChatsWithId(
+    @Path('chatId') int chatId,
+    @Query('page') int page,
+    @Query('page_size') int pageSize,
   );
 
   @POST(ApiConstants.sendMessage)
-   Future<SendMessageResponseModel> sendMessage(
+  Future<SendMessageResponseModel> sendMessage(
     @Path('chatId') int chatId,
-    @Body() SendMessageRequestModel request
+    @Body() SendMessageRequestModel request,
   );
-
-
-  
 
   // @POST(ApiConstants.uploadFile)
   // @MultiPart()
@@ -66,7 +63,7 @@ abstract class RestClient {
   //   @Part(name: "folderId") String folderId,
   //   @Part(name: "file") MultipartFile file,
   // );
-  
+
   // @DELETE(ApiConstants.deleteFolder)
   // Future<DeleteFolderResponseModel> deleteFolder(
   //   @Body() DeleteFolderRequestModel request
@@ -76,6 +73,4 @@ abstract class RestClient {
   // Future<DeleteFileResponseModel> delete(
   //   @Body() DeleteFileRequestModel request
   // );
-
 }
-

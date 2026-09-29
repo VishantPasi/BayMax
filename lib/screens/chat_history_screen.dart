@@ -1,4 +1,4 @@
-import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
+import 'package:baymax/models/ResponseModels/get_chats_response_model.dart' as get_chats;
 import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:baymax/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ class ChatHistoryScreen extends StatefulWidget {
 }
 
 class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  List<GetChatsResponseModel> _recentChats = [];
+  List<get_chats.Items>? _recentChats = [];
   bool _isLoadingRecentChats = true;
   final ChatService _chatService = ChatService();
 
@@ -26,12 +26,12 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
   Future<void> _loadRecentChats() async {
     try {
-      final chats = await _chatService.getChats();
+      final chats = await _chatService.getChats(1, 20);
 
       if (!mounted) return;
 
       setState(() {
-        _recentChats = chats.toList();
+        _recentChats = chats.items;
         _isLoadingRecentChats = false;
       });
     } catch (e) {
@@ -193,7 +193,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                             color: Color.fromARGB(255, 255, 198, 75),
                           ),
                         )
-                      : _recentChats.isEmpty
+                      : _recentChats!.isEmpty
                       ? Center(
                           child: Text(
                             "No recent activity",
@@ -206,14 +206,14 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         )
                       : Column(
                           children: [
-                            for (int i = 0; i < _recentChats.length; i++) ...[
+                            for (int i = 0; i < _recentChats!.length; i++) ...[
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => ChatScreen(
-                                        chatId: _recentChats[i].id,
+                                        chatId: _recentChats![i].id,
                                       ),
                                     ),
                                   ).then((_) {
@@ -221,16 +221,16 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                   });
                                 },
                                 child: recentActivity(
-                                  _recentChats[i].title ?? "Untitled Chat",
+                                  _recentChats![i].title ?? "Untitled Chat",
                                   _formatTime(
-                                    DateTime.parse(_recentChats[i].updatedAt!),
+                                    DateTime.parse(_recentChats![i].updatedAt!),
                                     
                                   ),
-                                  i == _recentChats.length - 1,
+                                  i == _recentChats!.length - 1,
                                 ),
                               ),
 
-                              if (i != _recentChats.length - 1)
+                              if (i != _recentChats!.length - 1)
                                 const SizedBox(height: 10),
                             ],
                           ],
