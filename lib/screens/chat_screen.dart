@@ -1,5 +1,6 @@
 import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:baymax/retrofit/retrofit_service.dart';
@@ -30,6 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isGenerating = false;
   int? _currentChatId;
   String? _chatTitle;
+  bool _isUserAtBottom = true;
 
   final List<Map<String, dynamic>> _messages = [];
 
@@ -49,7 +51,11 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
+    
+
     _currentChatId = widget.chatId;
+
+    _scrollController.addListener(_handleScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -70,6 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_handleScroll);
     _messageController.dispose();
     _scrollController.dispose();
     _messageFocusNode.dispose();
@@ -110,6 +117,24 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _handleScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
+    const double threshold = 30.0;
+
+    final position = _scrollController.position;
+
+    final isAtBottom = position.maxScrollExtent - position.pixels <= threshold;
+
+    if (_isUserAtBottom != isAtBottom) {
+      setState(() {
+        _isUserAtBottom = isAtBottom;
+      });
+    }
+  }
+
   Widget buildChatBubble(String message, bool isUser) {
     return SizedBox(
       width: double.infinity,
@@ -146,16 +171,29 @@ class _ChatScreenState extends State<ChatScreen> {
                     : null,
               ),
 
-              child: SelectionArea(
-                child: Text(
-                  message,
-
-                  textAlign: TextAlign.start,
-
-                  style: GoogleFonts.urbanist(
+              child: MarkdownBody(
+                data: message,
+                selectable: true,
+                styleSheet: MarkdownStyleSheet(
+                  p: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
+                    fontSize: 15,
                   ),
+
+                  strong: GoogleFonts.urbanist(
+                    color: const Color.fromARGB(255, 255, 198, 75),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+
+                  listBullet: GoogleFonts.urbanist(
+                    color: const Color.fromARGB(255, 255, 198, 75),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+
+                  listIndent: 24,
                 ),
               ),
             ),
@@ -190,64 +228,69 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
 
     try {
-      final accessToken = await SecureStorageService.getAccessToken();
-      ChatService chatService = new ChatService();
-  
+      final chatService = ChatService();
 
-
-      
-
+      // Create a new chat if necessary.
       if (_currentChatId == null) {
-        final response = await chatService.createChat(message.length > 50
-                ? '${message.substring(0, 50)}...'
-                : message);
-
-      
+        final response = await chatService.createChat(
+          message.length > 50 ? '${message.substring(0, 50)}...' : message,
+        );
 
         _currentChatId = response.id;
       }
 
-      
+      await chatService.sendMessageStream(
+        chatId: _currentChatId!,
+        message: message,
+        onChunk: (content) {
+          if (!mounted) {
+            return;
+          }
 
-      chatService.saveMessage(_currentChatId!, message);
+          setState(() {
+            _messages.last['message'] = '${_messages.last['message']}$content';
+          });
 
-
-      
-        
-
-        _scrollToBottom();
-      
+          _scrollToBottom();
+        },
+      );
     } catch (e) {
       if (!mounted) {
         return;
       }
 
+      debugPrint('AI request failed: $e');
+
       setState(() {
         _messages.last['message'] =
             'Sorry, something went wrong while generating the response.';
       });
-
-      debugPrint('AI request failed: $e');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isGenerating = false;
-        });
+      if (!mounted) {
+        return;
       }
+
+      setState(() {
+        _isGenerating = false;
+      });
+
+      _scrollToBottom();
     }
   }
 
   void _scrollToBottom() {
+    if (!_isUserAtBottom) {
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients) {
+      if (!_scrollController.hasClients || !_isUserAtBottom) {
         return;
       }
 
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-
-        duration: const Duration(milliseconds: 150),
-
+        duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
       );
     });

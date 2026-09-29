@@ -9,7 +9,7 @@ class ApiConstants {
   static const String createChat = "/chats";
   static const String getChats = "/chats";
   static const String getChatsWithId = "/chats/{chatId}";
-  static const String sendMessage = "/chats/{chatId}/message";
+  static const String sendMessage = "/chats/{chatId}/messages";
   
   
   

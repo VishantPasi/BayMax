@@ -45,7 +45,7 @@ abstract class RestClient {
   @GET(ApiConstants.getChats)
    Future<List<GetChatsResponseModel>> getChats();
 
-  @GET(ApiConstants.getChatsWithId)
+  @POST(ApiConstants.getChatsWithId)
    Future<GetChatsWithIdResponseModel> getChatsWithId(
     @Path('chatId') int chatId
   );
