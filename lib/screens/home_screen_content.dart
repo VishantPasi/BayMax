@@ -466,6 +466,10 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                                     return;
                                   }
 
+                                  if (message.length < 2){
+                                    return;
+                                  }
+
                                   openChat(
                                     prompt: message,
                                     isQuickAction: false,
