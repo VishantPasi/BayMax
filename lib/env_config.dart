@@ -2,6 +2,7 @@ enum Environment { dev, prod }
 
 abstract class AppEnvironment {
   static late String baseUrl;
+  static late String webSdkURL;
   static late String environmentName;
 
   static late Environment _environment;
@@ -13,11 +14,13 @@ abstract class AppEnvironment {
     switch (_environment) {
       case Environment.dev:
         baseUrl = "http://192.168.7.14:8000";
+        webSdkURL = "85903431634-5qot5ou85dn5ofu5bb74cci5b5mee95e.apps.googleusercontent.com";
         environmentName = "DEV";
         break;
 
       case Environment.prod:
         baseUrl = "http://192.168.7.15:8000";
+        webSdkURL = "85903431634-5qot5ou85dn5ofu5bb74cci5b5mee95e.apps.googleusercontent.com";
         environmentName = "PROD";
         break;
     }

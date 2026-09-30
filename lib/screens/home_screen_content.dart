@@ -734,13 +734,20 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                           ),
                         )
                       : _recentChats!.isEmpty
-                      ? Text(
-                          "No recent activity",
-                          style: GoogleFonts.urbanist(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        )
+                      ? Center(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Text(
+                                "No recent activity",
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
                       : Column(
                           children: [
                             for (int i = 0; i < _recentChats!.length; i++) ...[

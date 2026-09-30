@@ -2,10 +2,12 @@ import 'package:baymax/env_config.dart';
 
 class ApiConstants {
   static String baseUrl = AppEnvironment.baseUrl;
+  static String webSdkURL = AppEnvironment.webSdkURL;
 
   static const String authRegister = "/auth/signup";
   static const String authLogin = "/auth/login";
   static const String fetchDetails = "/auth/me";
+  static const String googleSignIn = "/auth/google";
   static const String createChat = "/chats";
   static const String getChats = "/chats";
   static const String getChatsWithId = "/chats/{chatId}";

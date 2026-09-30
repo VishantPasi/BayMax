@@ -1,5 +1,6 @@
 import 'package:baymax/models/RequestModels/auth_me_request_model.dart';
 import 'package:baymax/models/RequestModels/create_chat_request_model.dart';
+import 'package:baymax/models/RequestModels/google_sign_in_request_model.dart';
 import 'package:baymax/models/RequestModels/send_message_request_model.dart';
 import 'package:baymax/models/RequestModels/sign_in_request_model.dart';
 import 'package:baymax/models/RequestModels/sign_up_request_model.dart';
@@ -7,6 +8,7 @@ import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
 import 'package:baymax/models/ResponseModels/create_chat_response_model.dart';
 import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
 import 'package:baymax/models/ResponseModels/get_chats_with_id_response_model.dart';
+import 'package:baymax/models/ResponseModels/google_sign_in_response_model.dart';
 import 'package:baymax/models/ResponseModels/send_message_response_model.dart';
 import 'package:baymax/models/ResponseModels/sign_in_response_model.dart';
 import 'package:baymax/models/ResponseModels/sign_up_response_model.dart';
@@ -26,6 +28,11 @@ abstract class RestClient {
 
   @POST(ApiConstants.authLogin)
   Future<SignInResponseModel> signIn(@Body() SignInRequestModel request);
+
+  @POST(ApiConstants.googleSignIn)
+  Future<GoogleSignInResponseModel> googleSignIn(
+    @Body() GoogleSignInRequestModel request,
+  );
 
   @GET(ApiConstants.fetchDetails)
   Future<AuthMeResponseModel> fetchUserDetails(
@@ -56,21 +63,4 @@ abstract class RestClient {
     @Body() SendMessageRequestModel request,
   );
 
-  // @POST(ApiConstants.uploadFile)
-  // @MultiPart()
-  // Future<void> uploadFile(
-  //   @Part(name: "uid") String uid,
-  //   @Part(name: "folderId") String folderId,
-  //   @Part(name: "file") MultipartFile file,
-  // );
-
-  // @DELETE(ApiConstants.deleteFolder)
-  // Future<DeleteFolderResponseModel> deleteFolder(
-  //   @Body() DeleteFolderRequestModel request
-  // );
-
-  // @DELETE(ApiConstants.delete)
-  // Future<DeleteFileResponseModel> delete(
-  //   @Body() DeleteFileRequestModel request
-  // );
 }

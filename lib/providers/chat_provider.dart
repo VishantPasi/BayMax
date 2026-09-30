@@ -1,7 +1,6 @@
 import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 
 class ChatState {
   final List<Map<String, dynamic>> messages;

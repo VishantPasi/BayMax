@@ -1,3 +1,4 @@
+import 'package:baymax/network/apiHandling/auth.dart';
 import 'package:baymax/screens/login/sign_in_screen.dart';
 import 'package:baymax/screens/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
@@ -379,7 +380,7 @@ class _InitialLoginScreenState extends State<InitialLoginScreen> {
                   const Color.fromARGB(255, 202, 202, 202),
                   false,
                   true,
-                  () {},
+                  () => Auth().signInWithGoogle(context),
                 ),
                 SizedBox(height: 20),
       
