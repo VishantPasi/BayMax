@@ -1,7 +1,7 @@
-import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:baymax/models/ResponseModels/auth_me_response_model.dart';
 import 'package:baymax/models/ResponseModels/get_chats_response_model.dart' as get_chats;
 import 'package:baymax/network/apiHandling/chat.dart';
+import 'package:baymax/providers/chat_provider.dart';
 import 'package:baymax/providers/user_provider.dart';
 import 'package:baymax/screens/chat_history_screen.dart';
 import 'package:baymax/screens/chat_screen.dart';
@@ -43,22 +43,32 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
     }
   }
 
-  void openChat({String? prompt, bool? isQuickAction}) {
-    _messageFocusNode.unfocus();
+  void openChat({
+  String? prompt,
+  bool? isQuickAction,
+}) {
+  _messageFocusNode.unfocus();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ChatScreen(chatId: null, initialPrompt: prompt, isQuickAction: isQuickAction),
+  // IMPORTANT:
+  // Reset the provider used for new chats.
+  ref.invalidate(chatProvider(null));
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChatScreen(
+        chatId: null,
+        initialPrompt: prompt,
+        isQuickAction: isQuickAction,
       ),
-    );
+    ),
+  );
 
-    if (mounted) {
-      _messageFocusNode.unfocus();
-      _messageController.clear();
-    }
+  if (mounted) {
+    _messageFocusNode.unfocus();
+    _messageController.clear();
   }
+}
 
   @override
   void initState() {
@@ -231,10 +241,15 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
     AuthMeResponseModel user,
   ) {
     return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+  child: RefreshIndicator(
+    color: const Color.fromARGB(255, 255, 198, 75),
+    backgroundColor: const Color.fromARGB(255, 40, 40, 40),
+    onRefresh: _loadRecentChats,
+    child: SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Row(
@@ -765,6 +780,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
           ],
         ),
       ),
+  )
     );
   }
 }

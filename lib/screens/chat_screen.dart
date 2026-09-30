@@ -46,34 +46,39 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    _scrollController.addListener(_handleScroll);
+  _scrollController.addListener(_handleScroll);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (!mounted) return;
 
-      if (widget.chatId != null) {
-        ref.read(chatProvider(widget.chatId).notifier).loadChat();
-      }
+    // Existing chat
+    if (widget.chatId != null) {
+      await ref.read(chatProvider(widget.chatId).notifier).loadChat();
+    }
 
-      if (widget.initialPrompt != null &&
-          widget.initialPrompt!.trim().isNotEmpty) {
-        _messageController.text = widget.initialPrompt!;
+    // Prompt coming from HomeScreen
+    if (widget.initialPrompt != null &&
+        widget.initialPrompt!.trim().isNotEmpty) {
+      
+      final prompt = widget.initialPrompt!.trim();
 
-        if (widget.isQuickAction != true) {
-          _messageFocusNode.unfocus();
+      _messageController.text = prompt;
 
-          sendMessage();
-        }
-      }
+      // Automatically send HomeScreen prompt
+      if (widget.isQuickAction != true) {
+        _messageFocusNode.unfocus();
 
-      if (widget.isQuickAction == true) {
+        await sendMessage();
+      } else {
+        // Quick action should allow user to edit/add text
         _messageFocusNode.requestFocus();
       }
-    });
-  }
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -84,7 +89,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     super.dispose();
   }
-
 
   void _handleScroll() {
     if (!_scrollController.hasClients) {
@@ -415,36 +419,58 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               const SizedBox(width: 10),
 
                               GestureDetector(
-                                onTap: chatState.isGenerating
-                                    ? null
-                                    : sendMessage,
-
-                                child: Container(
+                                onTap: () {
+                                  if (chatState.isGenerating) {
+                                    ref
+                                        .read(
+                                          chatProvider(widget.chatId).notifier,
+                                        )
+                                        .stopGeneration();
+                                  } else {
+                                    sendMessage();
+                                  }
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
                                   height: 40,
                                   width: 40,
-
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
-
                                     color: const Color.fromARGB(31, 0, 0, 0),
                                   ),
-
                                   child: Center(
-                                    child: chatState.isGenerating
-                                        ? const SizedBox(
-                                            height: 18,
-                                            width: 18,
-
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 180,
+                                      ),
+                                      transitionBuilder:
+                                          (
+                                            Widget child,
+                                            Animation<double> animation,
+                                          ) {
+                                            return ScaleTransition(
+                                              scale: animation,
+                                              child: child,
+                                            );
+                                          },
+                                      child: chatState.isGenerating
+                                          ? Container(
+                                              key: const ValueKey('stop'),
+                                              width: 18,
+                                              height: 18,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                            )
+                                          : const FaIcon(
+                                              key: ValueKey('send'),
+                                              FontAwesomeIcons.paperPlane,
                                               color: Colors.white,
+                                              size: 16,
                                             ),
-                                          )
-                                        : const FaIcon(
-                                            FontAwesomeIcons.paperPlane,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
+                                    ),
                                   ),
                                 ),
                               ),

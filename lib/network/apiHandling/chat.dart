@@ -41,14 +41,25 @@ class ChatService {
   }
 
   Future<void> sendMessageStream({
-    required int chatId,
-    required String message,
-    required void Function(String content) onChunk,
-  }) async {
-    final token = await SecureStorageService.getAccessToken();
+  required int chatId,
+  required String message,
+  required CancelToken cancelToken,
+  required Function(String content) onChunk,
+}) async {
+  final token = await SecureStorageService.getAccessToken();
 
-    final dio = RetrofitService.getDio(token: token);
+  final dio = RetrofitService.getDio(token: token);
 
+  print('========== STREAM START ==========');
+  print('Chat ID: $chatId');
+  print('Message: $message');
+  print('Base URL: ${dio.options.baseUrl}');
+  print(
+    'Authorization exists: '
+    '${dio.options.headers['Authorization'] != null}',
+  );
+
+  try {
     final response = await dio.post(
       '/chats/$chatId/messages',
       data: {
@@ -60,52 +71,92 @@ class ChatService {
           'Accept': 'text/event-stream',
         },
       ),
+      cancelToken: cancelToken,
     );
 
-    final stream = response.data.stream;
+    print('========== STREAM CONNECTED ==========');
+    print('Status: ${response.statusCode}');
+    print('Content-Type: ${response.headers.value('content-type')}');
+
+    final responseBody = response.data as ResponseBody;
 
     String buffer = '';
 
-    await for (final chunk in stream) {
-      buffer += utf8.decode(chunk, allowMalformed: true);
+    await for (final chunk in responseBody.stream) {
+      final decodedChunk = utf8.decode(
+        chunk,
+        allowMalformed: true,
+      );
 
-      while (buffer.contains('\n')) {
-        final newlineIndex = buffer.indexOf('\n');
+      print('========== RAW CHUNK ==========');
+      print(decodedChunk);
 
-        String line = buffer.substring(0, newlineIndex);
+      buffer += decodedChunk;
 
-        buffer = buffer.substring(newlineIndex + 1);
+      print('CURRENT BUFFER:');
+      print(buffer);
 
-        line = line.trim();
+      while (buffer.contains('\n\n')) {
+        final eventEnd = buffer.indexOf('\n\n');
 
-        if (line.isEmpty) {
-          continue;
-        }
+        final event = buffer.substring(0, eventEnd);
 
-        if (!line.startsWith('data:')) {
-          continue;
-        }
+        buffer = buffer.substring(eventEnd + 2);
 
-        final data = line.substring(5).trim();
+        print('========== SSE EVENT ==========');
+        print(event);
 
-        if (data == '[DONE]') {
-          return;
-        }
+        for (final line in event.split('\n')) {
+          final trimmedLine = line.trim();
 
-        try {
-          final decoded = jsonDecode(data);
+          print('SSE LINE: $trimmedLine');
 
-          if (decoded is Map<String, dynamic>) {
-            final content = decoded['content'];
-
-            if (content is String) {
-              onChunk(content);
-            }
+          if (!trimmedLine.startsWith('data:')) {
+            continue;
           }
-        } catch (e) {
-          // Ignore malformed/incomplete SSE lines.
+
+          final data = trimmedLine.substring(5).trim();
+
+          print('SSE DATA: $data');
+
+          if (data == '[DONE]') {
+            print('========== SSE DONE ==========');
+            return;
+          }
+
+          try {
+            final decoded = jsonDecode(data);
+
+            print('DECODED: $decoded');
+
+            if (decoded is Map<String, dynamic>) {
+              final content = decoded['content'];
+
+              if (content is String) {
+                print('========== CONTENT ==========');
+                print(content);
+
+                onChunk(content);
+              }
+            }
+          } catch (e) {
+            print('JSON DECODE ERROR: $e');
+            print('DATA WAS: $data');
+          }
         }
       }
     }
+
+    print('========== STREAM CLOSED ==========');
+  } on DioException catch (e) {
+    print('========== STREAM ERROR ==========');
+    print('Type: ${e.type}');
+    print('Message: ${e.message}');
+    print('Status: ${e.response?.statusCode}');
+    print('Data: ${e.response?.data}');
+    print('===================================');
+
+    rethrow;
   }
+}
 }
