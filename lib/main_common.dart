@@ -1,5 +1,6 @@
 import 'package:baymax/env_config.dart';
 import 'package:baymax/screens/login/initial_login_screen.dart';
+import 'package:baymax/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'BayMax',
       debugShowCheckedModeBanner: false,
+
+      theme: AppTheme.darkTheme,
 
       home: InitialLoginScreen(),
       // home: HomeScreen(),

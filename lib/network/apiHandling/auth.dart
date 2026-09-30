@@ -23,12 +23,12 @@ class Auth {
         ),
       );
 
-      await SecureStorageService.saveAccessToken(response.accessToken!);
+      final accessToken = await SecureStorageService.saveAccessToken(response.accessToken!);
 
       if (!context.mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen(accessToken: response.accessToken,)),
       );
 
       // Handle the response here
@@ -54,7 +54,7 @@ class Auth {
       if (!context.mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen(accessToken: response.accessToken!,)),
       );
       // Handle the response here
       print('Sign In Successful: ${response.accessToken}');
@@ -63,4 +63,5 @@ class Auth {
       print('Sign In Failed: $error');
     }
   }
+
 }

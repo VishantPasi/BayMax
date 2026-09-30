@@ -7,4 +7,6 @@ void main() async {
   AppEnvironment.setUpEnv(Environment.prod);
 
   mainCommon();
+
+  
 }

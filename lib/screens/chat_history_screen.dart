@@ -1,31 +1,22 @@
 import 'package:baymax/models/ResponseModels/get_chats_response_model.dart'
     as get_chats;
 import 'package:baymax/network/apiHandling/chat.dart';
+import 'package:baymax/providers/chat_history_provider.dart';
 import 'package:baymax/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChatHistoryScreen extends StatefulWidget {
+class ChatHistoryScreen extends ConsumerStatefulWidget {
   const ChatHistoryScreen({super.key});
 
   @override
-  State<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
+  ConsumerState<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
 }
 
-class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  final List<get_chats.Items> _recentChats = [];
-
-  final ChatService _chatService = ChatService();
+class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   final ScrollController _scrollController = ScrollController();
-
-  bool _isLoadingRecentChats = true;
-  bool _isLoadingMore = false;
-  bool _hasMoreChats = true;
-
-  int _currentPage = 1;
-
-  static const int _pageSize = 20;
 
   @override
   void initState() {
@@ -33,7 +24,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
     _scrollController.addListener(_handleScroll);
 
-    _loadRecentChats();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatHistoryProvider.notifier).loadRecentChats();
+    });
   }
 
   @override
@@ -53,75 +46,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
     const threshold = 200.0;
 
-    if (position.pixels >= position.maxScrollExtent - threshold &&
-        !_isLoadingMore &&
-        _hasMoreChats) {
-      _loadMoreChats();
-    }
-  }
-
-  Future<void> _loadRecentChats() async {
-    try {
-      final response = await _chatService.getChats(1, _pageSize);
-
-      if (!mounted) return;
-
-      final chats = response.items ?? [];
-
-      setState(() {
-        _recentChats
-          ..clear()
-          ..addAll(chats);
-
-        _currentPage = 1;
-        _hasMoreChats = response.hasNext ?? false;
-        _isLoadingRecentChats = false;
-      });
-    } catch (e, stackTrace) {
-      debugPrint('Failed to load recent chats: $e');
-      debugPrint('$stackTrace');
-
-      if (!mounted) return;
-
-      setState(() {
-        _isLoadingRecentChats = false;
-      });
-    }
-  }
-
-  Future<void> _loadMoreChats() async {
-    if (_isLoadingMore || !_hasMoreChats) {
-      return;
-    }
-
-    setState(() {
-      _isLoadingMore = true;
-    });
-
-    try {
-      final nextPage = _currentPage + 1;
-
-      final response = await _chatService.getChats(nextPage, _pageSize);
-
-      if (!mounted) return;
-
-      final chats = response.items ?? [];
-
-      setState(() {
-        _recentChats.addAll(chats);
-
-        _currentPage = nextPage;
-        _hasMoreChats = response.hasNext ?? false;
-      });
-    } catch (e, stackTrace) {
-      debugPrint('Failed to load more chats: $e');
-      debugPrint('$stackTrace');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingMore = false;
-        });
-      }
+    if (position.pixels >= position.maxScrollExtent - threshold) {
+      ref.read(chatHistoryProvider.notifier).loadMoreChats();
     }
   }
 
@@ -227,6 +153,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final chatState = ref.watch(chatHistoryProvider);
     return SafeArea(
       child: Column(
         children: [
@@ -235,7 +162,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
               left: 15.0,
               right: 20.0,
               top: 20.0,
-              bottom: 30.0,
+              bottom: 20.0,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,13 +186,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           ),
 
           Expanded(
-            child: _isLoadingRecentChats
+            child: chatState.isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
                       color: Color.fromARGB(255, 255, 198, 75),
                     ),
                   )
-                : _recentChats.isEmpty
+                : chatState.chats.isEmpty
                 ? Center(
                     child: Text(
                       "No recent activity",
@@ -279,10 +206,12 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: _recentChats.length + (_isLoadingMore ? 1 : 0),
+                    itemCount:
+                        chatState.chats.length +
+                        (chatState.isLoadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       // Bottom loading indicator
-                      if (index == _recentChats.length) {
+                      if (index == chatState.chats.length) {
                         return const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20),
                           child: Center(
@@ -293,7 +222,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         );
                       }
 
-                      final chat = _recentChats[index];
+                      final chat = chatState.chats[index];
 
                       return GestureDetector(
                         onTap: () {
@@ -303,21 +232,23 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                               builder: (_) => ChatScreen(
                                 chatId: chat.id,
                                 chatTitle: chat.title,
+                                isQuickAction: false,
                               ),
                             ),
-                          ).then((_) {
-                            _loadRecentChats();
-                          });
+                          );
+                          ref
+                              .read(chatHistoryProvider.notifier)
+                              .loadMoreChats();
                         },
                         child: Column(
                           children: [
                             recentActivity(
                               chat.title ?? "Untitled Chat",
                               _formatTime(DateTime.parse(chat.updatedAt!)),
-                              index == _recentChats.length - 1,
+                              index == chatState.chats.length - 1,
                             ),
 
-                            if (index != _recentChats.length - 1)
+                            if (index != chatState.chats.length - 1)
                               const SizedBox(height: 10),
                           ],
                         ),

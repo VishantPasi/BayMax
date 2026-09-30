@@ -5,15 +5,16 @@ import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:baymax/providers/user_provider.dart';
 import 'package:baymax/screens/chat_history_screen.dart';
 import 'package:baymax/screens/chat_screen.dart';
+import 'package:baymax/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreenContent extends ConsumerStatefulWidget {
-  final NotchBottomBarController? controller;
+  final String? accessToken;
 
-  const HomeScreenContent({super.key, this.controller});
+  const HomeScreenContent({super.key, this.accessToken});
 
   @override
   ConsumerState<HomeScreenContent> createState() => _HomeScreenContentState();
@@ -278,17 +279,21 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                       ),
                     ],
                   ),
-                  CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 255, 198, 75),
-                    child: Center(
-                      child: Text(
-                        user.name != null && user.name!.isNotEmpty
-                            ? user.name![0].toUpperCase()
-                            : "?",
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                  GestureDetector(
+                    onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: ((context) => ProfileScreen(accessToken: widget.accessToken!)))),
+                    child: CircleAvatar(
+                      
+                      backgroundColor: Color.fromARGB(255, 255, 198, 75),
+                      child: Center(
+                        child: Text(
+                          user.name != null && user.name!.isNotEmpty
+                              ? user.name![0].toUpperCase()
+                              : "?",
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -728,6 +733,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                                       builder: (_) => ChatScreen(
                                         chatId: _recentChats![i].id,
                                         chatTitle: _recentChats![i].title,
+                                        isQuickAction: false,
                                       ),
                                     ),
                                   ).then((_) {
@@ -748,6 +754,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                             ],
                           ],
                         ),
+                        SizedBox(height: 20,)
                 ],
               ),
             ),

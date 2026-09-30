@@ -1,10 +1,11 @@
-import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:baymax/providers/chat_provider.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   final String? initialPrompt;
   final bool? isQuickAction;
   final int? chatId;
@@ -18,31 +19,19 @@ class ChatScreen extends StatefulWidget {
   });
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _messageFocusNode = FocusNode();
   int maxLines = 1;
   double containerHeight = 120;
-  bool _isGenerating = false;
-  int? _currentChatId;
-  String? _chatTitle;
   bool _isUserAtBottom = true;
 
-  int _currentPage = 1;
   static const int _pageSize = 5;
-
-  bool _isLoadingChat = false;
-  bool _isLoadingOlder = false;
-  bool _hasMoreMessages = true;
-  final ChatService _chatService = ChatService();
-
   bool _shouldAutoScroll = true;
-
-  final List<Map<String, dynamic>> _messages = [];
 
   int maxHeight() {
     if (maxLines == 1) {
@@ -60,24 +49,28 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    _currentChatId = widget.chatId;
-    _chatTitle = widget.chatTitle;
-
     _scrollController.addListener(_handleScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
       if (widget.chatId != null) {
-        _loadChat();
-      } else if (widget.initialPrompt != null &&
+        ref.read(chatProvider(widget.chatId).notifier).loadChat();
+      }
+
+      if (widget.initialPrompt != null &&
           widget.initialPrompt!.trim().isNotEmpty) {
         _messageController.text = widget.initialPrompt!;
 
         if (widget.isQuickAction != true) {
           _messageFocusNode.unfocus();
+
           sendMessage();
         }
+      }
+
+      if (widget.isQuickAction == true) {
+        _messageFocusNode.requestFocus();
       }
     });
   }
@@ -92,159 +85,32 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  Future<void> _loadOlderMessages() async {
-    if (_isLoadingOlder || !_hasMoreMessages) {
-      return;
-    }
-
-    final chatId = _currentChatId;
-
-    if (chatId == null) {
-      return;
-    }
-
-    _isLoadingOlder = true;
-
-    try {
-      final nextPage = _currentPage + 1;
-
-      debugPrint('Loading older messages: page=$nextPage');
-
-      final response = await _chatService.getChat(chatId, nextPage, _pageSize);
-
-      if (!mounted) return;
-
-      final messages = response.messages ?? [];
-
-      if (messages.isEmpty) {
-        setState(() {
-          _hasMoreMessages = false;
-        });
-
-        return;
-      }
-
-      setState(() {
-        // API:
-        //
-        // 11
-        // 12
-        // 13
-        // 14
-        // 15
-        //
-        // Reverse because our ListView is reversed:
-        //
-        // 15
-        // 14
-        // 13
-        // 12
-        // 11
-
-        for (final message in messages.reversed) {
-          _messages.add({
-            'message': message.content ?? '',
-            'isUser': message.role == 'user',
-          });
-        }
-
-        _currentPage = nextPage;
-
-        _hasMoreMessages = messages.length == _pageSize;
-      });
-    } catch (e, stackTrace) {
-      debugPrint('Failed to load older messages: $e');
-      debugPrint('$stackTrace');
-    } finally {
-      _isLoadingOlder = false;
-    }
-  }
-
-  Future<void> _loadChat() async {
-    final chatId = _currentChatId;
-
-    if (chatId == null || _isLoadingChat) {
-      return;
-    }
-
-    setState(() {
-      _isLoadingChat = true;
-    });
-
-    try {
-      final response = await _chatService.getChat(chatId, 1, _pageSize);
-
-      if (!mounted) return;
-
-      final messages = response.messages ?? [];
-
-      setState(() {
-        _messages.clear();
-
-        // API gives oldest -> newest.
-        // Flutter stores newest -> oldest because ListView is reversed.
-        for (final message in messages.reversed) {
-          _messages.add({
-            'message': message.content ?? '',
-            'isUser': message.role == 'user',
-          });
-        }
-
-        _currentPage = 1;
-
-        _hasMoreMessages = messages.length == _pageSize;
-      });
-    } catch (e, stackTrace) {
-      debugPrint('Failed to load chat: $e');
-      debugPrint('$stackTrace');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingChat = false;
-        });
-      }
-    }
-  }
 
   void _handleScroll() {
-  if (!_scrollController.hasClients) {
-    return;
-  }
+    if (!_scrollController.hasClients) {
+      return;
+    }
 
-  final position = _scrollController.position;
+    final position = _scrollController.position;
 
-  const threshold = 100.0;
+    const threshold = 100.0;
 
-  // reverse:true
-  //
-  // pixels == 0
-  // -> newest messages / bottom
-  //
-  // maxScrollExtent
-  // -> oldest messages / top
+    final isAtBottom = position.pixels <= threshold;
 
-  final isAtBottom = position.pixels <= threshold;
+    if (_isUserAtBottom != isAtBottom) {
+      setState(() {
+        _isUserAtBottom = isAtBottom;
+      });
 
-  if (_isUserAtBottom != isAtBottom) {
-    setState(() {
-      _isUserAtBottom = isAtBottom;
-    });
+      if (!isAtBottom) {
+        _shouldAutoScroll = false;
+      }
+    }
 
-    // If user manually scrolls away from bottom,
-    // STOP automatic streaming scroll.
-    if (!isAtBottom) {
-      _shouldAutoScroll = false;
+    if (position.pixels >= position.maxScrollExtent - threshold) {
+      ref.read(chatProvider(widget.chatId).notifier).loadOlderMessages();
     }
   }
-
-  // Load older messages when user reaches the TOP.
-  if (position.pixels >=
-          position.maxScrollExtent - threshold &&
-      !_isLoadingOlder &&
-      _hasMoreMessages) {
-    _loadOlderMessages();
-  }
-}
 
   Widget buildChatBubble(String message, bool isUser) {
     return SizedBox(
@@ -315,120 +181,67 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> sendMessage() async {
-  if (_isGenerating) {
-    return;
-  }
+    final message = _messageController.text.trim();
 
-  final message = _messageController.text.trim();
-
-  if (message.isEmpty) {
-    return;
-  }
-
-  _messageFocusNode.unfocus();
-  _messageController.clear();
-
-  // Remember whether the user was at the bottom
-  // BEFORE adding the new message.
-  _shouldAutoScroll = _isUserAtBottom;
-
-  setState(() {
-    _messages.insert(0, {
-      'message': message,
-      'isUser': true,
-    });
-
-    _messages.insert(0, {
-      'message': '',
-      'isUser': false,
-    });
-
-    _isGenerating = true;
-  });
-
-  _scrollToBottom();
-
-  try {
-    final chatService = ChatService();
-
-    if (_currentChatId == null) {
-      final response = await chatService.createChat(
-        message.length > 50
-            ? '${message.substring(0, 50)}...'
-            : message,
-      );
-
-      _currentChatId = response.id;
-    }
-
-    await chatService.sendMessageStream(
-      chatId: _currentChatId!,
-      message: message,
-      onChunk: (content) {
-        if (!mounted) {
-          return;
-        }
-
-        setState(() {
-          _messages[0]['message'] =
-              '${_messages[0]['message']}$content';
-        });
-
-        if (_shouldAutoScroll) {
-          _scrollToBottom();
-        }
-      },
-    );
-  } catch (e) {
-    if (!mounted) {
+    if (message.isEmpty) {
       return;
     }
 
-    debugPrint('AI request failed: $e');
+    _messageFocusNode.unfocus();
+    _messageController.clear();
 
-    setState(() {
-      _messages[0]['message'] =
-          'Sorry, something went wrong while generating the response.';
-    });
-  } finally {
-    if (!mounted) {
-      return;
-    }
+    _shouldAutoScroll = _isUserAtBottom;
 
-    setState(() {
-      _isGenerating = false;
-    });
+    await ref
+        .read(chatProvider(widget.chatId).notifier)
+        .sendMessage(
+          message: message,
+
+          onChatCreated: () {
+            // Handle newly created chat here.
+            //
+            // For example:
+            // refresh recent chats
+          },
+
+          onChunk: (_) {
+            if (_shouldAutoScroll) {
+              _scrollToBottom();
+            }
+          },
+        );
 
     if (_shouldAutoScroll) {
       _scrollToBottom();
     }
   }
-}
 
   void _scrollToBottom() {
-  if (!_shouldAutoScroll) {
-    return;
-  }
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!mounted) {
-      return;
-    }
-
-    if (!_scrollController.hasClients) {
-      return;
-    }
-
     if (!_shouldAutoScroll) {
       return;
     }
 
-    _scrollController.jumpTo(0);
-  });
-}
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      if (!_scrollController.hasClients) {
+        return;
+      }
+
+      if (!_shouldAutoScroll) {
+        return;
+      }
+
+      _scrollController.jumpTo(0);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final chatState = ref.watch(chatProvider(widget.chatId));
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(15, 15, 15, 1),
       body: SafeArea(
@@ -445,16 +258,28 @@ class _ChatScreenState extends State<ChatScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children: [
-                  Text(
-                    _chatTitle ?? "New Chat",
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: FaIcon(
+                          FontAwesomeIcons.chevronLeft,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        chatState.chatTitle ?? "New Chat",
 
-                    style: GoogleFonts.urbanist(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.urbanist(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
 
                   const FaIcon(
@@ -465,15 +290,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 10),
 
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
                 reverse: true,
                 padding: const EdgeInsets.only(bottom: 20),
-                itemCount: _messages.length,
+                itemCount: chatState.messages.length,
                 itemBuilder: (context, index) {
-                  final message = _messages[index];
+                  final message = chatState.messages[index];
 
                   return buildChatBubble(
                     message['message'] as String,
@@ -545,7 +371,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         },
 
                         onSubmitted: (_) {
-                          if (!_isGenerating) {
+                          if (!chatState.isGenerating) {
                             sendMessage();
                           }
                         },
@@ -589,7 +415,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               const SizedBox(width: 10),
 
                               GestureDetector(
-                                onTap: _isGenerating ? null : sendMessage,
+                                onTap: chatState.isGenerating
+                                    ? null
+                                    : sendMessage,
 
                                 child: Container(
                                   height: 40,
@@ -602,7 +430,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
 
                                   child: Center(
-                                    child: _isGenerating
+                                    child: chatState.isGenerating
                                         ? const SizedBox(
                                             height: 18,
                                             width: 18,
