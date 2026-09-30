@@ -1,6 +1,3 @@
-import 'package:baymax/models/ResponseModels/get_chats_response_model.dart'
-    as get_chats;
-import 'package:baymax/network/apiHandling/chat.dart';
 import 'package:baymax/providers/chat_history_provider.dart';
 import 'package:baymax/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -176,85 +173,111 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
                     decoration: TextDecoration.none,
                   ),
                 ),
-                const FaIcon(
-                  FontAwesomeIcons.ellipsisVertical,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                // const FaIcon(
+                //   FontAwesomeIcons.ellipsisVertical,
+                //   color: Colors.white,
+                //   size: 18,
+                // ),
               ],
             ),
           ),
 
           Expanded(
-            child: chatState.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Color.fromARGB(255, 255, 198, 75),
-                    ),
-                  )
-                : chatState.chats.isEmpty
-                ? Center(
-                    child: Text(
-                      "No recent activity",
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount:
-                        chatState.chats.length +
-                        (chatState.isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      // Bottom loading indicator
-                      if (index == chatState.chats.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
+            child: RefreshIndicator(
+              color: const Color.fromARGB(255, 255, 198, 75),
+              backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+
+              onRefresh: () async {
+                await ref
+                    .read(chatHistoryProvider.notifier)
+                    .loadRecentChats(forceRefresh: true);
+              },
+
+              child: chatState.isLoading && chatState.chats.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [
+                        SizedBox(
+                          height: 400,
                           child: Center(
                             child: CircularProgressIndicator(
                               color: Color.fromARGB(255, 255, 198, 75),
                             ),
                           ),
-                        );
-                      }
+                        ),
+                      ],
+                    )
+                  : chatState.chats.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: 400,
+                          child: Center(
+                            child: Text(
+                              "No recent activity",
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount:
+                          chatState.chats.length +
+                          (chatState.isLoadingMore ? 1 : 0),
 
-                      final chat = chatState.chats[index];
-
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ChatScreen(
-                                chatId: chat.id,
-                                chatTitle: chat.title,
-                                isQuickAction: false,
+                      itemBuilder: (context, index) {
+                        // Bottom loading indicator
+                        if (index == chatState.chats.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Color.fromARGB(255, 255, 198, 75),
                               ),
                             ),
                           );
-                          ref
-                              .read(chatHistoryProvider.notifier)
-                              .loadMoreChats();
-                        },
-                        child: Column(
-                          children: [
-                            recentActivity(
-                              chat.title ?? "Untitled Chat",
-                              _formatTime(DateTime.parse(chat.updatedAt!)),
-                              index == chatState.chats.length - 1,
-                            ),
+                        }
 
-                            if (index != chatState.chats.length - 1)
-                              const SizedBox(height: 10),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                        final chat = chatState.chats[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChatScreen(
+                                  chatId: chat.id,
+                                  chatTitle: chat.title,
+                                  isQuickAction: false,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              recentActivity(
+                                chat.title ?? "Untitled Chat",
+                                _formatTime(DateTime.parse(chat.updatedAt!)),
+                                index == chatState.chats.length - 1,
+                              ),
+
+                              if (index != chatState.chats.length - 1)
+                                const SizedBox(height: 10),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ),
         ],
       ),

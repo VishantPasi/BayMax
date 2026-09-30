@@ -48,36 +48,41 @@ class ChatHistoryNotifier extends StateNotifier<ChatHistoryState> {
 
   static const int pageSize = 20;
 
-  Future<void> loadRecentChats() async {
-    if (state.isLoading == false && state.chats.isNotEmpty) {
-      return;
-    }
+  Future<void> loadRecentChats({bool forceRefresh = false}) async {
+  // Don't reload if already loading,
+  // unless this is an explicit refresh.
+  if (state.isLoading && !forceRefresh) {
+    return;
+  }
 
-    state = state.copyWith(
-      isLoading: true,
+  state = state.copyWith(
+    isLoading: true,
+  );
+
+  try {
+    final response = await _chatService.getChats(
+      1,
+      pageSize,
     );
 
-    try {
-      final response = await _chatService.getChats(1, pageSize);
+    final chats = response.items ?? [];
 
-      final chats = response.items ?? [];
+    state = state.copyWith(
+      chats: chats,
+      currentPage: 1,
+      hasMore: response.hasNext ?? false,
+      isLoading: false,
+      isLoadingMore: false,
+    );
+  } catch (e, stackTrace) {
+    print('Failed to load recent chats: $e');
+    print(stackTrace);
 
-      state = state.copyWith(
-        chats: chats,
-        currentPage: 1,
-        hasMore: response.hasNext ?? false,
-        isLoading: false,
-        isLoadingMore: false,
-      );
-    } catch (e, stackTrace) {
-      print('Failed to load recent chats: $e');
-      print(stackTrace);
-
-      state = state.copyWith(
-        isLoading: false,
-      );
-    }
+    state = state.copyWith(
+      isLoading: false,
+    );
   }
+}
 
   Future<void> loadMoreChats() async {
     if (state.isLoadingMore || !state.hasMore) {

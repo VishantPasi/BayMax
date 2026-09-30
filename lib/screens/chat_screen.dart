@@ -46,39 +46,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  _scrollController.addListener(_handleScroll);
+    _scrollController.addListener(_handleScroll);
 
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
 
-    // Existing chat
-    if (widget.chatId != null) {
-      await ref.read(chatProvider(widget.chatId).notifier).loadChat();
-    }
-
-    // Prompt coming from HomeScreen
-    if (widget.initialPrompt != null &&
-        widget.initialPrompt!.trim().isNotEmpty) {
-      
-      final prompt = widget.initialPrompt!.trim();
-
-      _messageController.text = prompt;
-
-      // Automatically send HomeScreen prompt
-      if (widget.isQuickAction != true) {
-        _messageFocusNode.unfocus();
-
-        await sendMessage();
-      } else {
-        // Quick action should allow user to edit/add text
-        _messageFocusNode.requestFocus();
+      // Existing chat
+      if (widget.chatId != null) {
+        await ref.read(chatProvider(widget.chatId).notifier).loadChat();
       }
-    }
-  });
-}
+
+      // Prompt coming from HomeScreen
+      if (widget.initialPrompt != null &&
+          widget.initialPrompt!.trim().isNotEmpty) {
+        final prompt = widget.initialPrompt!.trim();
+
+        _messageController.text = prompt;
+
+        // Automatically send HomeScreen prompt
+        if (widget.isQuickAction != true) {
+          _messageFocusNode.unfocus();
+
+          await sendMessage();
+        } else {
+          // Quick action should allow user to edit/add text
+          _messageFocusNode.requestFocus();
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -273,7 +272,7 @@ void initState() {
                       ),
                       SizedBox(width: 10),
                       Text(
-                        chatState.chatTitle ?? "New Chat",
+                        widget.chatTitle ?? "New Chat",
 
                         style: GoogleFonts.urbanist(
                           fontSize: 20,
@@ -286,11 +285,11 @@ void initState() {
                     ],
                   ),
 
-                  const FaIcon(
-                    FontAwesomeIcons.ellipsisVertical,
-                    color: Colors.white,
-                    size: 18,
-                  ),
+                  // const FaIcon(
+                  //   FontAwesomeIcons.ellipsisVertical,
+                  //   color: Colors.white,
+                  //   size: 18,
+                  // ),
                 ],
               ),
             ),
@@ -456,8 +455,8 @@ void initState() {
                                       child: chatState.isGenerating
                                           ? Container(
                                               key: const ValueKey('stop'),
-                                              width: 18,
-                                              height: 18,
+                                              width: 15,
+                                              height: 15,
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
