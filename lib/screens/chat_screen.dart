@@ -5,6 +5,181 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:baymax/providers/chat_provider.dart';
 
+class BreathingCircle extends StatefulWidget {
+  const BreathingCircle({super.key});
+
+  @override
+  State<BreathingCircle> createState() => _BreathingCircleState();
+}
+
+class _BreathingCircleState extends State<BreathingCircle>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scale;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+
+    _scale = Tween<double>(
+      begin: 0.75,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _opacity = Tween<double>(
+      begin: 0.35,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scale.value,
+          child: Opacity(
+            opacity: _opacity.value,
+            child: Container(
+              width: 15,
+              height: 15,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(255, 255, 198, 75),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class StreamingText extends StatefulWidget {
+  final String text;
+
+  const StreamingText({
+    super.key,
+    required this.text,
+  });
+
+  @override
+  State<StreamingText> createState() => _StreamingTextState();
+}
+
+class _StreamingTextState extends State<StreamingText>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  String _previousText = '';
+  String _newText = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _previousText = widget.text;
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant StreamingText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.text == oldWidget.text) {
+      return;
+    }
+
+    // Only animate text that was newly added.
+    if (widget.text.startsWith(oldWidget.text)) {
+      _previousText = oldWidget.text;
+      _newText = widget.text.substring(oldWidget.text.length);
+
+      _controller
+        ..reset()
+        ..forward();
+    } else {
+      // Message was replaced/reset.
+      _previousText = '';
+      _newText = widget.text;
+
+      _controller
+        ..reset()
+        ..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = MarkdownStyleSheet(
+      p: GoogleFonts.urbanist(
+        color: Colors.white,
+        fontWeight: FontWeight.w500,
+        fontSize: 14,
+      ),
+      strong: GoogleFonts.urbanist(
+        color: const Color.fromARGB(255, 255, 198, 75),
+        fontSize: 14,
+      ),
+      listBullet: GoogleFonts.urbanist(
+        color: const Color.fromARGB(255, 255, 198, 75),
+        fontSize: 14,
+      ),
+      listIndent: 24,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Already generated text.
+        if (_previousText.isNotEmpty)
+          MarkdownBody(
+            data: _previousText,
+            selectable: true,
+            styleSheet: style,
+          ),
+
+        // Only the new streamed text fades in.
+        if (_newText.isNotEmpty)
+          FadeTransition(
+            opacity: CurvedAnimation(
+              parent: _controller,
+              curve: Curves.easeOut,
+            ),
+            child: MarkdownBody(
+              data: _newText,
+              selectable: true,
+              styleSheet: style,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class ChatScreen extends ConsumerStatefulWidget {
   final String? initialPrompt;
   final bool? isQuickAction;
@@ -115,43 +290,47 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
   }
 
-  Widget buildChatBubble(String message, bool isUser) {
-    return SizedBox(
-      width: double.infinity,
-
-      child: Column(
-        crossAxisAlignment: isUser
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 15.0, top: 15.0),
-
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: isUser ? 250 : double.infinity,
-              ),
-
-              padding: const EdgeInsets.all(15),
-
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-
-                gradient: isUser
-                    ? LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-
-                        colors: [
-                          Colors.white.withValues(alpha: 0.18),
-                          Colors.white.withValues(alpha: 0.10),
-                        ],
-                      )
-                    : null,
-              ),
-
-              child: MarkdownBody(
+  Widget buildChatBubble(
+  String message,
+  bool isUser, {
+  bool isGenerating = false,
+}) {
+  return SizedBox(
+    width: double.infinity,
+    child: Column(
+      crossAxisAlignment:
+          isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 15.0,
+            top: 15.0,
+          ),
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: isUser ? 250 : double.infinity,
+            ),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: isUser
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.18),
+                        Colors.white.withValues(alpha: 0.10),
+                      ],
+                    )
+                  : null,
+            ),
+            child: isGenerating && message.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: BreathingCircle(),
+                  )
+                : MarkdownBody(
                 data: message,
                 selectable: true,
                 styleSheet: MarkdownStyleSheet(
@@ -176,12 +355,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   listIndent: 24,
                 ),
               ),
-            ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
+ 
 
   Future<void> sendMessage() async {
     final message = _messageController.text.trim();
@@ -304,9 +485,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 itemBuilder: (context, index) {
                   final message = chatState.messages[index];
 
+                  final isUser = message['isUser'] as bool;
+                  final text = message['message'] as String;
+
+                  // The last assistant message is the message currently being generated.
+                  final isLastMessage = index == 0;
+
+                  final isCurrentlyGenerating =
+                      chatState.isGenerating && !isUser && isLastMessage;
+
                   return buildChatBubble(
-                    message['message'] as String,
-                    message['isUser'] as bool,
+                    text,
+                    isUser,
+                    isGenerating: isCurrentlyGenerating,
                   );
                 },
               ),
@@ -396,24 +587,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         children: [
                           Row(
                             children: [
-                              Container(
-                                height: 40,
-                                width: 40,
+                              // Container(
+                              //   height: 40,
+                              //   width: 40,
 
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(15),
 
-                                  color: const Color.fromARGB(31, 0, 0, 0),
-                                ),
+                              //     color: const Color.fromARGB(31, 0, 0, 0),
+                              //   ),
 
-                                child: const Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.microphone,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
+                              //   child: const Center(
+                              //     child: FaIcon(
+                              //       FontAwesomeIcons.microphone,
+                              //       color: Colors.white,
+                              //       size: 18,
+                              //     ),
+                              //   ),
+                              // ),
 
                               const SizedBox(width: 10),
 

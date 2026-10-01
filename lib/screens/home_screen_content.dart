@@ -455,21 +455,21 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                           // ),
                           Row(
                             children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Color.fromARGB(31, 0, 0, 0),
-                                ),
-                                child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.microphone,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   height: 40,
+                              //   width: 40,
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(15),
+                              //     color: Color.fromARGB(31, 0, 0, 0),
+                              //   ),
+                              //   child: Center(
+                              //     child: FaIcon(
+                              //       FontAwesomeIcons.microphone,
+                              //       color: Colors.white,
+                              //       size: 18,
+                              //     ),
+                              //   ),
+                              // ),
                               SizedBox(width: 10),
 
                               GestureDetector(
