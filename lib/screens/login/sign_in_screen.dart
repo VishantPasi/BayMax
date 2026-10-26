@@ -1,5 +1,4 @@
 import 'package:baymax/network/apiHandling/auth.dart';
-import 'package:baymax/screens/home_screen.dart';
 import 'package:baymax/screens/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

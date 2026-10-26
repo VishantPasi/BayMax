@@ -183,13 +183,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
 
-            color: accentColor.withOpacity(0.10),
+            color: accentColor.withValues(alpha: 0.10),
 
             border: Border.all(color: accentColor, width: 2),
 
             boxShadow: [
               BoxShadow(
-                color: accentColor.withOpacity(0.15),
+                color: accentColor.withValues(alpha: 0.15),
                 blurRadius: 25,
                 spreadRadius: 2,
               ),
@@ -336,7 +336,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
 
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.redAccent.withOpacity(0.4)),
+          side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.4)),
 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -485,7 +485,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
         borderRadius: BorderRadius.circular(18),
 
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
 
       child: Column(children: children),
@@ -511,7 +511,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             height: 42,
 
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.10),
+              color: accentColor.withValues(alpha: 0.10),
 
               borderRadius: BorderRadius.circular(12),
             ),
@@ -551,56 +551,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  // ============================================================
-  // ACTION TILE
-  // ============================================================
-
-  Widget _actionTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-
-        child: Row(
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-
-              decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.10),
-
-                borderRadius: BorderRadius.circular(12),
-              ),
-
-              child: Icon(icon, color: accentColor, size: 21),
-            ),
-
-            const SizedBox(width: 14),
-
-            Expanded(
-              child: Text(
-                title,
-
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-
-            const Icon(Icons.chevron_right_rounded, color: Colors.white38),
-          ],
-        ),
-      ),
-    );
-  }
+  
 
   // ============================================================
   // SECTION TITLE
@@ -632,7 +583,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       height: 1,
       indent: 72,
 
-      color: Colors.white.withOpacity(0.05),
+      color: Colors.white.withValues(alpha: 0.05),
     );
   }
 }

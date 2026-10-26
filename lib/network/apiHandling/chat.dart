@@ -7,6 +7,7 @@ import 'package:baymax/models/ResponseModels/get_chats_with_id_response_model.da
 import 'package:baymax/retrofit/retrofit_service.dart';
 import 'package:baymax/services/secure_storage_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class ChatService {
   Future<CreateChatResponseModel> createChat(String title) async {
@@ -50,11 +51,11 @@ class ChatService {
 
   final dio = RetrofitService.getDio(token: token);
 
-  print('========== STREAM START ==========');
-  print('Chat ID: $chatId');
-  print('Message: $message');
-  print('Base URL: ${dio.options.baseUrl}');
-  print(
+  debugPrint('========== STREAM START ==========');
+  debugPrint('Chat ID: $chatId');
+  debugPrint('Message: $message');
+  debugPrint('Base URL: ${dio.options.baseUrl}');
+  debugPrint(
     'Authorization exists: '
     '${dio.options.headers['Authorization'] != null}',
   );
@@ -74,9 +75,9 @@ class ChatService {
       cancelToken: cancelToken,
     );
 
-    print('========== STREAM CONNECTED ==========');
-    print('Status: ${response.statusCode}');
-    print('Content-Type: ${response.headers.value('content-type')}');
+    debugPrint('========== STREAM CONNECTED ==========');
+    debugPrint('Status: ${response.statusCode}');
+    debugPrint('Content-Type: ${response.headers.value('content-type')}');
 
     final responseBody = response.data as ResponseBody;
 
@@ -88,13 +89,13 @@ class ChatService {
         allowMalformed: true,
       );
 
-      print('========== RAW CHUNK ==========');
-      print(decodedChunk);
+      debugPrint('========== RAW CHUNK ==========');
+      debugPrint(decodedChunk);
 
       buffer += decodedChunk;
 
-      print('CURRENT BUFFER:');
-      print(buffer);
+      debugPrint('CURRENT BUFFER:');
+      debugPrint(buffer);
 
       while (buffer.contains('\n\n')) {
         final eventEnd = buffer.indexOf('\n\n');
@@ -103,13 +104,13 @@ class ChatService {
 
         buffer = buffer.substring(eventEnd + 2);
 
-        print('========== SSE EVENT ==========');
-        print(event);
+        debugPrint('========== SSE EVENT ==========');
+        debugPrint(event);
 
         for (final line in event.split('\n')) {
           final trimmedLine = line.trim();
 
-          print('SSE LINE: $trimmedLine');
+          debugPrint('SSE LINE: $trimmedLine');
 
           if (!trimmedLine.startsWith('data:')) {
             continue;
@@ -117,44 +118,44 @@ class ChatService {
 
           final data = trimmedLine.substring(5).trim();
 
-          print('SSE DATA: $data');
+          debugPrint('SSE DATA: $data');
 
           if (data == '[DONE]') {
-            print('========== SSE DONE ==========');
+            debugPrint('========== SSE DONE ==========');
             return;
           }
 
           try {
             final decoded = jsonDecode(data);
 
-            print('DECODED: $decoded');
+            debugPrint('DECODED: $decoded');
 
             if (decoded is Map<String, dynamic>) {
               final content = decoded['content'];
 
               if (content is String) {
-                print('========== CONTENT ==========');
-                print(content);
+                debugPrint('========== CONTENT ==========');
+                debugPrint(content);
 
                 onChunk(content);
               }
             }
           } catch (e) {
-            print('JSON DECODE ERROR: $e');
-            print('DATA WAS: $data');
+            debugPrint('JSON DECODE ERROR: $e');
+            debugPrint('DATA WAS: $data');
           }
         }
       }
     }
 
-    print('========== STREAM CLOSED ==========');
+    debugPrint('========== STREAM CLOSED ==========');
   } on DioException catch (e) {
-    print('========== STREAM ERROR ==========');
-    print('Type: ${e.type}');
-    print('Message: ${e.message}');
-    print('Status: ${e.response?.statusCode}');
-    print('Data: ${e.response?.data}');
-    print('===================================');
+    debugPrint('========== STREAM ERROR ==========');
+    debugPrint('Type: ${e.type}');
+    debugPrint('Message: ${e.message}');
+    debugPrint('Status: ${e.response?.statusCode}');
+    debugPrint('Data: ${e.response?.data}');
+    debugPrint('===================================');
 
     rethrow;
   }

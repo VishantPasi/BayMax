@@ -1,4 +1,5 @@
 import 'package:baymax/network/apiHandling/chat.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:dio/dio.dart';
 
@@ -105,10 +106,10 @@ void dispose() {
         hasMoreMessages: messages.length == pageSize,
         isLoadingChat: false,
       );
-    } catch (e, stackTrace) {
-      print('Failed to load chat: $e');
+    } catch (e) {
+      debugPrint('Failed to load chat: $e');
 
-      print(stackTrace);
+      // debugPrint(stackTrace);
 
       state = state.copyWith(isLoadingChat: false);
     }
@@ -170,10 +171,10 @@ void dispose() {
         hasMoreMessages: messages.length == pageSize,
         isLoadingOlder: false,
       );
-    } catch (e, stackTrace) {
-      print('Failed to load older messages: $e');
+    } catch (e) {
+      debugPrint('Failed to load older messages: $e');
 
-      print(stackTrace);
+      // debugPrint(stackTrace);
 
       state = state.copyWith(isLoadingOlder: false);
     }
@@ -188,20 +189,20 @@ void dispose() {
   required Function() onChatCreated,
   required Function(String content) onChunk,
 }) async {
-  print('========== SEND MESSAGE START ==========');
-  print('Message: $message');
-  print('Current chat ID: ${state.chatId}');
-  print('Is generating: ${state.isGenerating}');
+  debugPrint('========== SEND MESSAGE START ==========');
+  debugPrint('Message: $message');
+  debugPrint('Current chat ID: ${state.chatId}');
+  debugPrint('Is generating: ${state.isGenerating}');
 
   if (state.isGenerating) {
-    print('BLOCKED: Already generating');
+    debugPrint('BLOCKED: Already generating');
     return;
   }
 
   final trimmedMessage = message.trim();
 
   if (trimmedMessage.isEmpty) {
-    print('BLOCKED: Empty message');
+    debugPrint('BLOCKED: Empty message');
     return;
   }
 
@@ -228,10 +229,10 @@ void dispose() {
   try {
     int? currentChatId = state.chatId;
 
-    print('Current chat ID before create: $currentChatId');
+    debugPrint('Current chat ID before create: $currentChatId');
 
     if (currentChatId == null) {
-      print('Creating new chat...');
+      debugPrint('Creating new chat...');
 
       final response = await _chatService.createChat(
         trimmedMessage.length > 50
@@ -241,7 +242,7 @@ void dispose() {
 
       currentChatId = response.id;
 
-      print('NEW CHAT CREATED: $currentChatId');
+      debugPrint('NEW CHAT CREATED: $currentChatId');
 
       state = state.copyWith(
         chatId: currentChatId,
@@ -250,16 +251,16 @@ void dispose() {
       onChatCreated();
     }
 
-    print('Starting stream...');
-    print('Chat ID: $currentChatId');
-    print('Message: $trimmedMessage');
+    debugPrint('Starting stream...');
+    debugPrint('Chat ID: $currentChatId');
+    debugPrint('Message: $trimmedMessage');
 
     await _chatService.sendMessageStream(
       chatId: currentChatId!,
       message: trimmedMessage,
       cancelToken: _cancelToken!,
       onChunk: (content) {
-        print('CHUNK RECEIVED: $content');
+        debugPrint('CHUNK RECEIVED: $content');
 
         final messages =
             List<Map<String, dynamic>>.from(state.messages);
@@ -277,16 +278,16 @@ void dispose() {
       },
     );
 
-    print('STREAM FINISHED');
+    debugPrint('STREAM FINISHED');
 
   } on DioException catch (e) {
-    print('DIO ERROR');
-    print('Type: ${e.type}');
-    print('Message: ${e.message}');
-    print('Response: ${e.response?.data}');
+    debugPrint('DIO ERROR');
+    debugPrint('Type: ${e.type}');
+    debugPrint('Message: ${e.message}');
+    debugPrint('Response: ${e.response?.data}');
 
     if (e.type == DioExceptionType.cancel) {
-      print('Generation stopped by user.');
+      debugPrint('Generation stopped by user.');
       return;
     }
 
@@ -302,9 +303,9 @@ void dispose() {
       messages: messages,
     );
 
-  } catch (e, stackTrace) {
-    print('GENERAL ERROR: $e');
-    print(stackTrace);
+  } catch (e) {
+    debugPrint('GENERAL ERROR: $e');
+    // debugPrint(stackTrace);
 
     final messages =
         List<Map<String, dynamic>>.from(state.messages);
@@ -319,7 +320,7 @@ void dispose() {
     );
 
   } finally {
-    print('========== SEND MESSAGE END ==========');
+    debugPrint('========== SEND MESSAGE END ==========');
 
     _cancelToken = null;
 

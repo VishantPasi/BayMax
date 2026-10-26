@@ -1,5 +1,6 @@
 import 'package:baymax/models/ResponseModels/get_chats_response_model.dart';
 import 'package:baymax/network/apiHandling/chat.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class ChatHistoryState {
@@ -74,9 +75,9 @@ class ChatHistoryNotifier extends StateNotifier<ChatHistoryState> {
       isLoading: false,
       isLoadingMore: false,
     );
-  } catch (e, stackTrace) {
-    print('Failed to load recent chats: $e');
-    print(stackTrace);
+  } catch (e) {
+    debugPrint('Failed to load recent chats: $e');
+    // debugPrint(stackTrace as String?);
 
     state = state.copyWith(
       isLoading: false,
@@ -112,9 +113,9 @@ class ChatHistoryNotifier extends StateNotifier<ChatHistoryState> {
         hasMore: response.hasNext ?? false,
         isLoadingMore: false,
       );
-    } catch (e, stackTrace) {
-      print('Failed to load more chats: $e');
-      print(stackTrace);
+    } catch (e) {
+      debugPrint('Failed to load more chats: $e');
+      // debugPrint(stackTrace);
 
       state = state.copyWith(
         isLoadingMore: false,

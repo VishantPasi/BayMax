@@ -57,8 +57,8 @@ class Auth {
         throw Exception("Unable to get Firebase ID token");
       }
 
-      print("Firebase UID: ${firebaseUser.uid}");
-      print("Email: ${firebaseUser.email}");
+      // debugPrint("Firebase UID: ${firebaseUser.uid}");
+      // debugPrint("Email: ${firebaseUser.email}");
 
       // 7. Send Firebase token to YOUR FastAPI backend
       final response =
@@ -85,17 +85,17 @@ class Auth {
         (route) => false,
       );
 
-      print(
+      debugPrint(
         "Google Sign In Successful: ${response.accessToken}",
       );
     } on FirebaseAuthException catch (e) {
-      print("Firebase Auth Error: ${e.code}");
-      print(e.message);
+      debugPrint("Firebase Auth Error: ${e.code}");
+      debugPrint(e.message);
     } on GoogleSignInException catch (e) {
-      print("Google Sign In Error: ${e.code}");
-      print(e.description);
+      debugPrint("Google Sign In Error: ${e.code}");
+      debugPrint(e.description);
     } catch (error) {
-      print("Google Sign In Failed: $error");
+      debugPrint("Google Sign In Failed: $error");
     }
   }
 
@@ -132,10 +132,10 @@ class Auth {
       );
 
       // Handle the response here
-      print('Sign Up Successful: ${response.accessToken}');
+      debugPrint('Sign Up Successful: ${response.accessToken}');
     } catch (error) {
       // Handle the error here
-      print('Sign Up Failed: $error');
+      debugPrint('Sign Up Failed: $error');
     }
   }
 
@@ -162,10 +162,10 @@ class Auth {
       );
 
       // Handle the response here
-      print('Sign In Successful: ${response.accessToken}');
+      debugPrint('Sign In Successful: ${response.accessToken}');
     } catch (error) {
       // Handle the error here
-      print('Sign In Failed: $error');
+      debugPrint('Sign In Failed: $error');
     }
   }
 }

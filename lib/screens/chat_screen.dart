@@ -205,7 +205,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   double containerHeight = 120;
   bool _isUserAtBottom = true;
 
-  static const int _pageSize = 5;
   bool _shouldAutoScroll = true;
 
   int maxHeight() {

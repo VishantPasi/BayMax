@@ -1,4 +1,3 @@
-import 'package:baymax/network/apiHandling/auth.dart';
 import 'package:baymax/screens/chat_history_screen.dart';
 import 'package:baymax/screens/home_screen_content.dart';
 import 'package:baymax/screens/login/initial_login_screen.dart';

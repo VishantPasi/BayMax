@@ -1,9 +1,4 @@
-import 'package:baymax/models/RequestModels/sign_up_request_model.dart';
 import 'package:baymax/network/apiHandling/auth.dart';
-import 'package:baymax/network/api_client_factory.dart';
-import 'package:baymax/retrofit/rest_client.dart';
-import 'package:baymax/retrofit/retrofit_service.dart';
-import 'package:baymax/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
